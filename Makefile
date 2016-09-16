@@ -49,12 +49,12 @@ LINKERSCRIPT := $(shell find . -name $(addsuffix *,STM32F407VGT))
 WORNINGS = -Wall -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -Winit-self -Wcast-qual
 CFLAGS := -c -fmessage-length=0 $(WORNINGS) -fno-exceptions -fno-builtin -ffunction-sections -fdata-sections \
 -funsigned-char -MMD -fno-delete-null-pointer-checks -fomit-frame-pointer $(CPU) -Os -std=gnu99 -MMD -MP -D $(DEVICENAME)  
-LDFLAGS := -Wl,--gc-sections -Wl,--wrap,main $(CPU) 
+LDFLAGS := $(CPU) -Wl,--no-wchar-size-warning -Wl,--gc-sections --specs=nano.specs -Wl,-Map=$(BINDIR)/$(PROJECT).map,-cref
 ASMFLAGS := -x assembler-with-cpp -c $(WORNINGS) -fmessage-length=0 -fno-exceptions -fno-builtin -ffunction-sections \
 -fdata-sections -funsigned-char -MMD -fno-delete-null-pointer-checks -fomit-frame-pointer $(CPU) -Os 
-LIBFLAGS = -lm -lgcc
+LIBFLAGS = -lm -lc -lgcc -lnosys
 # Cpp option? -lstdc++ -lsupc++
-# -lc -lgcc -lnosys
+
 ifeq ($(DEBUG), 1)
   CFLAGS += -DDEBUG -O0 -g3
 else
@@ -63,10 +63,10 @@ endif
 
 SRCS := $(wildcard $(SRCDIR)/*.c) $(CMSISDEVDIR)/Src/system_stm32f4xx.c
 HALSRCS := $(wildcard $(HALDIR)/Src/*.c)
-ASMS := $(CMSISDEVDIR)/Src/gcc
+ASMS := $(CMSISDEVDIR)/Src/gcc/$(STARTUP)
 OBJS := $(addprefix $(OBJDIR)/,$(notdir $(SRCS:%.c=%.o)) \
 								$(notdir $(HALSRCS:%.c=%.o))\
-								$(notdir $(ASMSRCS:%.s=%.o)))
+								$(notdir $(ASMS:%.s=%.o)))
 # directory of headerfiles macros
 INCPATH := -I Inc \
 		-I $(CMSISDIR)/Inc \
@@ -77,7 +77,8 @@ INCPATH := -I Inc \
 #dependency file
 DEPS := $(OBJS:%.o=%.d)
 
-VPATH := $(SRCDIR) $(HALDIR)/Src $(APPDIR) $(CMSISDEVDIR)/Src $(ASMS)
+vpath %.c $(SRCDIR) $(HALDIR)/Src $(APPDIR) $(CMSISDEVDIR)/Src 
+vpath %.s $(CMSISDEVDIR)/Src/gcc/
 
 .PHONY: all size
 
@@ -86,7 +87,7 @@ all: $(BINDIR)/$(PROJECT).elf size
 #generate binary-file
 $(BINDIR)/$(PROJECT).elf: $(OBJS)
 	-@mkdir -p $(BINDIR)
-	$(CC) $(LDFLAGS) -T $(LINKERSCRIPT) -o $@ $^ -Wl,--start-group $(LIBFLAGS) -Wl,--end-group
+	$(CC) $(LDFLAGS) -T$(LINKERSCRIPT) -o $@ $^ -Wl,--start-group $(LIBFLAGS) -Wl,--end-group
 
 #sources are generated to objectfile in Subdirectry 
 $(OBJDIR)/%.o: %.c 
@@ -95,12 +96,14 @@ $(OBJDIR)/%.o: %.c
 
 $(OBJDIR)/%.o: %.s
 	-@mkdir -p $(OBJDIR)
-	$(CC) $(CPU) -c $(ASMFLAGS) $(INCPATH) -o $@ $< $(LIBFLAGS)
+	$(CC) -c $(ASMFLAGS) $(INCPATH) -o $@ $< $(LIBFLAGS)
 
 -include $(DEPS) #-includeは.PHONYとallの間に入れないように
 
 size: $(BINDIR)/$(PROJECT).elf
-	$(SIZE) -B $(BINDIR)/$(PROJECT).elf
+	$(SIZE) -A $(BINDIR)/$(PROJECT).elf
 #delete object binary directries
 clean: 
 	$(RM) $(OBJDIR) $(BINDIR) 
+print:
+	@echo $(OBJS)
