@@ -50,7 +50,7 @@ LINKERSCRIPT := $(shell find . -name $(addsuffix *,STM32F407VGT))
 WORNINGS = -Wall -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -Winit-self -Wcast-qual
 CFLAGS := -c -fmessage-length=0 $(WORNINGS) -fno-exceptions -fno-builtin -ffunction-sections -fdata-sections \
 -funsigned-char -MMD -fno-delete-null-pointer-checks -fomit-frame-pointer $(CPU) -Os -std=gnu99 -MMD -MP -D $(DEVICENAME)  
-LDFLAGS := $(CPU) -Wl,--no-wchar-size-warning -Wl,--gc-sections --specs=nano.specs -Wl,-Map=$(BINDIR)/$(PROJECT).map,-cref
+LDFLAGS := $(CPU) -Wl,--no-wchar-size-warning -Wl,--gc-sections --specs=nano.specs -Wl,-Map=$(OBJDIR)/$(PROJECT).map,-cref
 ASMFLAGS := -x assembler-with-cpp -c $(WORNINGS) -fmessage-length=0 -fno-exceptions -fno-builtin -ffunction-sections \
 -fdata-sections -funsigned-char -MMD -fno-delete-null-pointer-checks -fomit-frame-pointer $(CPU) -Os 
 LIBFLAGS = -lm -lc -lgcc -lnosys
