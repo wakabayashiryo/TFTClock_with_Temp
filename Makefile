@@ -105,6 +105,4 @@ size: $(BINDIR)/$(PROJECT).elf
 	$(SIZE) -A $(BINDIR)/$(PROJECT).elf
 #delete object binary directries
 clean: 
-	$(RM) $(OBJDIR) $(BINDIR) 
-print:
-	@echo $(OBJS)
+	$(RM) $(OBJDIR) $(BINDIR)
