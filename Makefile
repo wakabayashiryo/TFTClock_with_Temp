@@ -6,8 +6,9 @@
 #
 #	File-History:
 # 	>date Detail
-#	>2016/9/15 generate this file 
-#
+#	>2016/9/14 generate this file 
+#   >2016/9/16 Complete to compile device drier 
+#	reference to worning lshttp://stackoverflow.com/questions/13060106/getting-rid-of-wchar-t-size-linker-warning
 
 #target name
 PROJECT := name1
