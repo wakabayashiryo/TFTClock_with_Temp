@@ -13,7 +13,7 @@
 PROJECT := name1
 DEBUG := 0
 HARDFP := 0
-DEVICENAME := STM32F407VGT
+DEVICENAME := STM32F407xx
 STARTUP := startup_stm32f407xx.s
 # command of compile and remove 
 CC = arm-none-eabi-gcc
@@ -42,18 +42,18 @@ else
 	FLOATABI := softfp
 endif
 CPU := -mcpu=cortex-m4 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=$(FLOATABI) 
-LINKERSCRIPT := $(shell find . -name $(addsuffix *,$(DEVICENAME)))
+LINKERSCRIPT := $(shell find . -name $(addsuffix *,STM32F407VGT))
 
 #  compile options
 WORNINGS = -Wall -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -Winit-self -Wcast-qual
 CFLAGS := -c -fmessage-length=0 $(WORNINGS) -fno-exceptions -fno-builtin -ffunction-sections -fdata-sections \
--funsigned-char -MMD -fno-delete-null-pointer-checks -fomit-frame-pointer $(CPU) -Os -std=gnu99 -MMD -MP  
-LDFLAGS := -Wl,--gc-sections -Wl,--wrap,main $(CPU)
+-funsigned-char -MMD -fno-delete-null-pointer-checks -fomit-frame-pointer $(CPU) -Os -std=gnu99 -MMD -MP -D $(DEVICENAME)  
+LDFLAGS := -Wl,--gc-sections -Wl,--wrap,main $(CPU) 
 ASMFLAGS := -x assembler-with-cpp -c $(WORNINGS) -fmessage-length=0 -fno-exceptions -fno-builtin -ffunction-sections \
 -fdata-sections -funsigned-char -MMD -fno-delete-null-pointer-checks -fomit-frame-pointer $(CPU) -Os 
-LIBFLAGS = -lm -lc -lgcc -lnosys
+LIBFLAGS = -lm 
 # Cpp option? -lstdc++ -lsupc++
-
+# -lc -lgcc -lnosys
 ifeq ($(DEBUG), 1)
   CFLAGS += -DDEBUG -O0 -g3
 else
@@ -71,38 +71,32 @@ INCPATH := -I Inc \
 		-I $(CMSISDIR)/Inc \
 		-I $(HALDIR)/Inc \
 		$(addprefix -I ,$(shell find Apprication -name Inc)) \
-		-I $(CMSISDEVDIR)/Inc/stm32f407xx.h
-		
+		-I $(CMSISDEVDIR)/Inc/
+
 #dependency file
-DEPF := $(OBJS:%.o=%.d)
+DEPS := $(OBJS:%.o=%.d)
 
-VPATH := $(SRCDIRS) $(HALDIRS)
+VPATH := $(SRCDIR) $(HALDIR) $(APPDIR) $(CMSISDEVDIR)/Src/
 
-.PHONY: all clean
+.PHONY: all print
 
-all: $(BIN)/$(TARGET)
+all: $(BINDIR)/$(PROJECT).elf
 
 #generate binary-file
-$(BIN)/$(TARGET): $(OBJF)
-	-@mkdir -p $(BIN)
-	$(CC) -o $@ $^
+$(BINDIR)/$(PROJECT).elf: $(OBJS)
+	-@mkdir -p $(BINDIR)
+	$(CC) $(LDFLAGS) -o $@ $^
 
 #sources are generated to objectfile in Subdirectry 
-$(OBJ)/%.o: %.c
-	-@mkdir -p $(OBJ)
-	$(CC) $(CFLAGS) $(INCLUDE) -o $@ $<
-	
--include $(DEPF) #-includeは.PHONYとallの間に入れないように
+$(OBJDIR)/%.o: %.c $(ASMS)
+	-@mkdir -p $(OBJDIR)
+	$(CC) $(CFLAGS) $(INCPATH) -o $@ $< $(LIBFLAGS)
+
+-include $(DEPS) #-includeは.PHONYとallの間に入れないように
 
 #delete object binary directries
 clean: 
-	$(RM) $(OBJ) $(BIN) 
+	$(RM) $(OBJDIR) $(BINDIR) 
 
 print:
-	@echo $(SRCS)
-	@echo $(INCPATH)
-	@echo $(wildcard $(HALDIR)/Src/*.c)
-	@echo $(ASMS) 
 	@echo $(OBJS)
-	@echo $(DEPF)
-	@echo $(LINKERSCRIPT)
