@@ -81,9 +81,9 @@ DEPS := $(OBJS:%.o=%.d)
 vpath %.c $(SRCDIR) $(HALDIR)/Src $(APPDIR) $(CMSISDEVDIR)/Src 
 vpath %.s $(CMSISDEVDIR)/Src/gcc/
 
-.PHONY: all size
+.PHONY: all size lst 
 
-all: $(BINDIR)/$(PROJECT).elf size
+all: $(BINDIR)/$(PROJECT).elf lst hex bin size
 
 #generate binary-file
 $(BINDIR)/$(PROJECT).elf: $(OBJS)
@@ -100,9 +100,22 @@ $(OBJDIR)/%.o: %.s
 	$(CC) -c $(ASMFLAGS) $(INCPATH) -o $@ $< $(LIBFLAGS)
 
 -include $(DEPS) #-includeは.PHONYとallの間に入れないように
+	
+hex: $(BINDIR)/$(PROJECT).hex
+bin: $(BINDIR)/$(PROJECT).bin	
+lst: $(OBJDIR)/$(PROJECT).lst
+
+$(BINDIR)/$(PROJECT).bin: $(BINDIR)/$(PROJECT).elf
+	$(OBJCOPY) -O binary $< $@
+
+$(BINDIR)/$(PROJECT).hex: $(BINDIR)/$(PROJECT).elf
+	$(OBJCOPY) -O ihex $< $@
 
 size: $(BINDIR)/$(PROJECT).elf
-	$(SIZE) -A $(BINDIR)/$(PROJECT).elf
+	$(SIZE) -A $<
+
+$(OBJDIR)/$(PROJECT).lst: $(BINDIR)/$(PROJECT).elf
+	$(OBJDUMP) -Sdh $< > $@
 #delete object binary directries
 clean: 
 	$(RM) $(OBJDIR) $(BINDIR)
