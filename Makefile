@@ -15,6 +15,7 @@ DEBUG := 0
 HARDFP := 0
 DEVICENAME := STM32F407xx
 STARTUP := startup_stm32f407xx.s
+
 # command of compile and remove 
 CC = arm-none-eabi-gcc
 OBJDUMP = arm-none-eabi-objdump
@@ -51,7 +52,7 @@ CFLAGS := -c -fmessage-length=0 $(WORNINGS) -fno-exceptions -fno-builtin -ffunct
 LDFLAGS := -Wl,--gc-sections -Wl,--wrap,main $(CPU) 
 ASMFLAGS := -x assembler-with-cpp -c $(WORNINGS) -fmessage-length=0 -fno-exceptions -fno-builtin -ffunction-sections \
 -fdata-sections -funsigned-char -MMD -fno-delete-null-pointer-checks -fomit-frame-pointer $(CPU) -Os 
-LIBFLAGS = -lm 
+LIBFLAGS = -lm -lgcc
 # Cpp option? -lstdc++ -lsupc++
 # -lc -lgcc -lnosys
 ifeq ($(DEBUG), 1)
@@ -62,7 +63,7 @@ endif
 
 SRCS := $(wildcard $(SRCDIR)/*.c) $(CMSISDEVDIR)/Src/system_stm32f4xx.c
 HALSRCS := $(wildcard $(HALDIR)/Src/*.c)
-ASMS := $(CMSISDEVDIR)/Src/gcc/$(STARTUP)
+ASMS := $(CMSISDEVDIR)/Src/gcc
 OBJS := $(addprefix $(OBJDIR)/,$(notdir $(SRCS:%.c=%.o)) \
 								$(notdir $(HALSRCS:%.c=%.o))\
 								$(notdir $(ASMSRCS:%.s=%.o)))
@@ -71,32 +72,35 @@ INCPATH := -I Inc \
 		-I $(CMSISDIR)/Inc \
 		-I $(HALDIR)/Inc \
 		$(addprefix -I ,$(shell find Apprication -name Inc)) \
-		-I $(CMSISDEVDIR)/Inc/
+		-I $(CMSISDEVDIR)/Inc
 
 #dependency file
 DEPS := $(OBJS:%.o=%.d)
 
-VPATH := $(SRCDIR) $(HALDIR) $(APPDIR) $(CMSISDEVDIR)/Src/
+VPATH := $(SRCDIR) $(HALDIR)/Src $(APPDIR) $(CMSISDEVDIR)/Src $(ASMS)
 
-.PHONY: all print
+.PHONY: all size
 
-all: $(BINDIR)/$(PROJECT).elf
+all: $(BINDIR)/$(PROJECT).elf size
 
 #generate binary-file
 $(BINDIR)/$(PROJECT).elf: $(OBJS)
 	-@mkdir -p $(BINDIR)
-	$(CC) $(LDFLAGS) -o $@ $^
+	$(CC) $(LDFLAGS) -T $(LINKERSCRIPT) -o $@ $^ -Wl,--start-group $(LIBFLAGS) -Wl,--end-group
 
 #sources are generated to objectfile in Subdirectry 
-$(OBJDIR)/%.o: %.c $(ASMS)
+$(OBJDIR)/%.o: %.c 
 	-@mkdir -p $(OBJDIR)
 	$(CC) $(CFLAGS) $(INCPATH) -o $@ $< $(LIBFLAGS)
 
+$(OBJDIR)/%.o: %.s
+	-@mkdir -p $(OBJDIR)
+	$(CC) $(CPU) -c $(ASMFLAGS) $(INCPATH) -o $@ $< $(LIBFLAGS)
+
 -include $(DEPS) #-includeは.PHONYとallの間に入れないように
 
+size: $(BINDIR)/$(PROJECT).elf
+	$(SIZE) -B $(BINDIR)/$(PROJECT).elf
 #delete object binary directries
 clean: 
 	$(RM) $(OBJDIR) $(BINDIR) 
-
-print:
-	@echo $(OBJS)
