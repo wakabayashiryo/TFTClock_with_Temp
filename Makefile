@@ -40,7 +40,7 @@
 
 #project name
 PROJECT := project1
-DEBUG := 0
+DEBUG := 1
 HARDFP := 0
 DEVICENAME := STM32F407xx
 STARTUP_FILE := startup_stm32f407xx.s
