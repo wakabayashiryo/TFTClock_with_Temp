@@ -8,7 +8,7 @@
 # 	>date Detail
 #	>2016/9/14 generate this file 
 #   >2016/9/16 Complete to compile device drier 
-#	reference to worning lshttp://stackoverflow.com/questions/13060106/getting-rid-of-wchar-t-size-linker-warning
+#	reference to worning http://stackoverflow.com/questions/13060106/getting-rid-of-wchar-t-size-linker-warning
 #must delete template file in hal_driver
 
 #define STM32F405xx */   /*!< STM32F405RG, STM32F405VG and STM32F405ZG Devices */
@@ -57,6 +57,7 @@ RM = rm -f -r
 
 #project directories
 DRV_DIR := ./Drivers
+MIDLEWARE_DIR := ./MidleWare
 CMSIS_DIR := $(DRV_DIR)/CMSIS
 CMSISDEV_DIR := $(CMSIS_DIR)/Device
 HAL_DIR := $(DRV_DIR)/STM32F4xx_HAL_Driver
@@ -64,12 +65,14 @@ APP_DIR := ./Apprication
 
 #source directory macros
 SRCDIR := ./Src
+MIDLEWARE_SRCDIR := $(shell find $(MIDLEWARE_DIR) -name Src)
 CMSISDEV_SRCDIR := $(CMSISDEV_DIR)/Src
 APP_SRCDIR := $(shell find ./Apprication -name Src)
 HAL_SRCDIR := $(HAL_DIR)/Src
 
 #include directory macros
 INCDIR := ./Inc
+MIDLEWARE_INCDIR := $(shell find $(MIDLEWARE_DIR) -name Inc)
 CMSISDEV_INCDIR := $(CMSISDEV_DIR)/Inc
 APP_INCDIR := $(shell find Apprication -name Inc)
 HAL_INCDIR := $(HAL_DIR)/Inc
@@ -79,7 +82,7 @@ CMSIS_INCDIR := $(CMSIS_DIR)/Inc
 OBJDIR := ./Debug
 BINDIR := ./Bin
 
-#device file directories
+#device file directoriess
 LINKERSCRIPT_DIR := $(DRV_DIR)/LinkerScript
 STARTUP_DIR := $(CMSISDEV_SRCDIR)/gcc
 
@@ -110,7 +113,8 @@ endif
 SRCS := $(wildcard $(SRCDIR)/*.c)\
  $(wildcard $(CMSISDEV_SRCDIR)/*.c)\
  $(wildcard $(HAL_SRCDIR)/*.c)\
- $(foreach dir,$(APP_SRCDIR),$(wildcard $(dir)/*.c))
+ $(foreach dir,$(APP_SRCDIR),$(wildcard $(dir)/*.c))\
+ $(foreach dir,$(MIDLEWARE_SRCDIR),$(wildcard $(dir)/*.c))
 
 ASMS := $(STARTUP_DIR)/$(STARTUP_FILE)
 OBJS := $(addprefix $(OBJDIR)/,$(notdir $(SRCS:%.c=%.o) $(ASMS:%.s=%.o)))
@@ -120,14 +124,15 @@ INCPATH := -I $(INCDIR) \
 		-I $(APP_INCDIR) \
 		-I $(HAL_INCDIR) \
 		-I $(CMSIS_INCDIR) \
-		-I $(CMSISDEV_INCDIR)
+		-I $(CMSISDEV_INCDIR)\
+		-I $(MIDLEWARE_INCDIR)
 
-vpath %.c $(SRCDIR) $(CMSISDEV_SRCDIR) $(APP_SRCDIR) $(HAL_SRCDIR)
+vpath %.c $(SRCDIR) $(CMSISDEV_SRCDIR) $(APP_SRCDIR) $(HAL_SRCDIR) $(MIDLEWARE_SRCDIR)
 vpath %.s $(STARTUP_DIR)
 
 .PHONY: all size lst 
 
-all: $(BINDIR)/$(PROJECT).elf lst hex bin size
+all: checkfile $(BINDIR)/$(PROJECT).elf lst hex bin size
 
 #generate binary-file
 $(BINDIR)/$(PROJECT).elf: $(OBJS)
@@ -160,6 +165,19 @@ $(OBJDIR)/$(PROJECT).lst: $(BINDIR)/$(PROJECT).elf
 	
 clean: 
 	$(RM) $(OBJDIR) $(BINDIR)
+
+checkfile:
+#check file name 
+ifeq ($(shell find . -name $(LINKERSCRIPT_FILE)),$(LINKERSCRIPT_DIR)/$(LINKERSCRIPT_FILE))
+	@echo 'found LinkerScript_file'	 
+else 
+	$(error not found LinkerScript_file)
+endif
+ifeq ($(shell find . -name $(STARTUP_FILE)),$(STARTUP_DIR)/$(STARTUP_FILE))
+	@echo 'found StartUp_file'
+else 
+	$(error not found StartUp_file)
+endif
 
 #dependency file
 DEPS := $(OBJS:%.o=%.d)
