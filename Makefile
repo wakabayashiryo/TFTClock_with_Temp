@@ -121,11 +121,11 @@ OBJS := $(addprefix $(OBJDIR)/,$(notdir $(SRCS:%.c=%.o) $(ASMS:%.s=%.o)))
 
 # directory of headerfiles macros
 INCPATH := -I $(INCDIR) \
-		-I $(APP_INCDIR) \
-		-I $(HAL_INCDIR) \
+		-I $(HAL_INCDIR)\
 		-I $(CMSIS_INCDIR) \
 		-I $(CMSISDEV_INCDIR)\
-		-I $(MIDLEWARE_INCDIR)
+		$(addprefix -I ,$(APP_INCDIR))\
+		$(addprefix -I ,$(MIDLEWARE_INCDIR))
 
 vpath %.c $(SRCDIR) $(CMSISDEV_SRCDIR) $(APP_SRCDIR) $(HAL_SRCDIR) $(MIDLEWARE_SRCDIR)
 vpath %.s $(STARTUP_DIR)
@@ -162,7 +162,7 @@ size: $(BINDIR)/$(PROJECT).elf
 
 $(OBJDIR)/$(PROJECT).lst: $(BINDIR)/$(PROJECT).elf
 	$(OBJDUMP) -Sdh $< > $@
-	
+
 clean: 
 	$(RM) $(OBJDIR) $(BINDIR)
 
