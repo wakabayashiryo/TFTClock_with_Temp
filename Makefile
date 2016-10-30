@@ -179,6 +179,13 @@ else
 	$(error not found StartUp_file)
 endif
 
+	@if [ ! -d $(APP_DIR) ]; \
+		then mkdir -p $(APP_DIR); \
+	fi
+	@if [ ! -d $(MIDLEWARE_DIR) ]; \
+		then mkdir -p $(MIDLEWARE_DIR); \
+	fi
+
 #dependency file
 DEPS := $(OBJS:%.o=%.d)
 -include $(DEPS)
