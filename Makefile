@@ -100,7 +100,7 @@ CFLAGS := -c -fmessage-length=0 $(WORNINGS) -fno-exceptions -fno-builtin -ffunct
 -funsigned-char -MMD -fno-delete-null-pointer-checks -fomit-frame-pointer $(CPU) -Os -std=gnu99 -MMD -MP -D $(DEVICENAME)  
 LDFLAGS := $(CPU) -Wl,--no-wchar-size-warning -Wl,--gc-sections --specs=nano.specs -Wl,-Map=$(OBJDIR)/$(PROJECT).map,-cref
 ASMFLAGS := -c -x assembler-with-cpp -c $(WORNINGS) -fmessage-length=0 -fno-exceptions -fno-builtin -ffunction-sections \
--fdata-sections -funsigned-char -MMD -fno-delete-null-pointer-checks -fomit-frame-pointer $(CPU) -Os 
+-fdata-sections -funsigned-char -MMD -fno-delete-null-pointer-checks -fomit-frame-pointer $(CPU)
 LIBFLAGS = -lm -lc -lgcc -lnosys
 # Cpp option? -lstdc++ -lsupc++
 
