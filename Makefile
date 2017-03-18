@@ -12,33 +12,6 @@
 #	reference to worning http://stackoverflow.com/questions/13060106/getting-rid-of-wchar-t-size-linker-warning
 #	*Have to delete template file in hal_driver
 
-# STM32F405xx     STM32F405RG, STM32F405VG and STM32F405ZG Devices 
-# STM32F415xx     STM32F415RG, STM32F415VG and STM32F415ZG Devices 
-# STM32F407xx     STM32F407VG, STM32F407VE, STM32F407ZG, STM32F407ZE, STM32F407IG  and STM32F407IE Devices 
-# STM32F417xx     STM32F417VG, STM32F417VE, STM32F417ZG, STM32F417ZE, STM32F417IG and STM32F417IE Devices 
-# STM32F427xx     STM32F427VG, STM32F427VI, STM32F427ZG, STM32F427ZI, STM32F427IG and STM32F427II Devices 
-# STM32F437xx     STM32F437VG, STM32F437VI, STM32F437ZG, STM32F437ZI, STM32F437IG and STM32F437II Devices 
-# STM32F429xx     STM32F429VG, STM32F429VI, STM32F429ZG, STM32F429ZI, STM32F429BG, STM32F429BI, STM32F429NG, 
-                                   #STM32F439NI, STM32F429IG  and STM32F429II Devices 
-# STM32F439xx     STM32F439VG, STM32F439VI, STM32F439ZG, STM32F439ZI, STM32F439BG, STM32F439BI, STM32F439NG, 
-                                   #STM32F439NI, STM32F439IG and STM32F439II Devices 
-# STM32F401xC     STM32F401CB, STM32F401CC, STM32F401RB, STM32F401RC, STM32F401VB and STM32F401VC Devices 
-# STM32F401xE     STM32F401CD, STM32F401RD, STM32F401VD, STM32F401CE, STM32F401RE and STM32F401VE Devices 
-# STM32F410Tx     STM32F410T8 and STM32F410TB Devices 
-# STM32F410Cx     STM32F410C8 and STM32F410CB Devices 
-# STM32F410Rx     STM32F410R8 and STM32F410RB Devices 
-# STM32F411xE     STM32F411CC, STM32F411RC, STM32F411VC, STM32F411CE, STM32F411RE and STM32F411VE Devices 
-# STM32F446xx     STM32F446MC, STM32F446ME, STM32F446RC, STM32F446RE, STM32F446VC, STM32F446VE, STM32F446ZC, 
-                                   #and STM32F446ZE Devices 
-# STM32F469xx     STM32F469AI, STM32F469II, STM32F469BI, STM32F469NI, STM32F469AG, STM32F469IG, STM32F469BG, 
-                                   #STM32F469NG, STM32F469AE, STM32F469IE, STM32F469BE and STM32F469NE Devices 
-# STM32F479xx     STM32F479AI, STM32F479II, STM32F479BI, STM32F479NI, STM32F479AG, STM32F479IG, STM32F479BG 
-                                   #and STM32F479NG Devices 
-# STM32F412Cx     STM32F412CEU and STM32F412CGU Devices 
-# STM32F412Zx     STM32F412ZET, STM32F412ZGT, STM32F412ZEJ and STM32F412ZGJ Devices 
-# STM32F412Vx     STM32F412VET, STM32F412VGT, STM32F412VEH and STM32F412VGH Devices 
-# STM32F412Rx     STM32F412RET, STM32F412RGT, STM32F412REY and STM32F412RGY Devices 
-
 #project configuration
 PROJECT := F4xx_Project
 OPTIMIZE := -O0 -g3
@@ -124,7 +97,7 @@ WORNINGS := -Wall -Wextra -Wno-unused-parameter -Wno-missing-field-initializers 
 CFLAGS := -std=gnu99 -c -fmessage-length=0 $(WORNINGS) -fno-exceptions -fno-builtin -ffunction-sections -fdata-sections \
 -funsigned-char -MMD -fno-delete-null-pointer-checks -fomit-frame-pointer $(OPTIMIZE) $(CPU) -MMD -MP -D $(DEVICENAME)  
 
-LDFLAGS := $(CPU) -Wl,--no-wchar-size-warning -Wl,--gc-sections --specs=nano.specs -Wl,-Map=$(OBJDIR)/$(PROJECT).map,-cref
+LDFLAGS := -Wl,--no-wchar-size-warning -Wl,--gc-sections --specs=nano.specs -Wl,-Map=$(OBJDIR)/$(PROJECT).map,-cref $(CPU) 
 
 ASMFLAGS := -c -x assembler-with-cpp -c $(WORNINGS) -fmessage-length=0 -fno-exceptions -fno-builtin -ffunction-sections \
 -fdata-sections -funsigned-char -MMD -fno-delete-null-pointer-checks -fomit-frame-pointer $(OPTIMIZE) $(CPU)
