@@ -153,3 +153,5 @@
     |バージョン  |日付|更新内容 |
     |:-----:|:-------:|:----------------|
     |ver1.0||2017/3/18|READMEの記述|
+ - # ライセンス情報
+    ## This software is released under the MIT License, see LICENSE
