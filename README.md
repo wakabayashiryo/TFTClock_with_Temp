@@ -135,7 +135,11 @@
     |  STM32F412Rx|STM32F412RET, STM32F412RGT, STM32F412REY and STM32F412RGY   |
     |  STM32F413xx|STM32F413CH, STM32F413MH, STM32F413RH, STM32F413VH, STM32F413ZH, STM32F413CG, STM32F413MG,STM32F413RG, STM32F413VG and STM32F413ZG   |
     |  STM32F423xx|STM32F423CH, STM32F423RH, STM32F423VH and STM32F423ZH   |
-    
+
+     - ## NUCLEO使用時の注意
+        NUCLEOのST-LINKから出力されるMCO(MasterClockOutput)をメインクロックで使用する場合、必ず回路図を確認してMCOとクロック入力ピンを接続してください。
+※デフォルトでは接続されていない。ショート用パッドにハンダ付けして接続する
+
  - # デバイスの変更方法
 
    >  MakeFile冒頭(参考デバイスSTM32F407VGT)
