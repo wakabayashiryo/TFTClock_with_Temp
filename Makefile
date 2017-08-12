@@ -97,7 +97,7 @@ WORNINGS := -Wall -Wextra -Wno-unused-parameter -Wno-missing-field-initializers 
 CFLAGS := -std=gnu99 -c -fmessage-length=0 $(WORNINGS) -fno-exceptions -fno-builtin -ffunction-sections -fdata-sections \
 -funsigned-char -MMD -fno-delete-null-pointer-checks -fomit-frame-pointer $(OPTIMIZE) $(CPU) -MMD -MP -D $(DEVICENAME)  
 
-LDFLAGS := -Wl,--no-wchar-size-warning -Wl,--gc-sections --specs=nano.specs -Wl,-Map=$(OBJDIR)/$(PROJECT).map,-cref $(CPU) 
+LDFLAGS := -Wl,--no-wchar-size-warning -Wl,--print-memory-usage -Wl,--gc-sections --specs=nano.specs -Wl,-Map=$(OBJDIR)/$(PROJECT).map,-cref $(CPU) 
 
 ASMFLAGS := -c -x assembler-with-cpp -c $(WORNINGS) -fmessage-length=0 -fno-exceptions -fno-builtin -ffunction-sections \
 -fdata-sections -funsigned-char -MMD -fno-delete-null-pointer-checks -fomit-frame-pointer $(OPTIMIZE) $(CPU)
