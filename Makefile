@@ -13,12 +13,12 @@
 #	*Have to delete template file in hal_driver
 
 #project configuration
-PROJECT := F4xx_Project
+PROJECT := TFTClock_with_Temp
 OPTIMIZE := -O0 -g3
 HARDFP := 0
-DEVICENAME := STM32F407xx
-STARTUP_FILE := startup_stm32f407xx.s
-LINKERSCRIPT_FILE := STM32F407VGTx_FLASH.ld
+DEVICENAME := STM32F401xE
+STARTUP_FILE := startup_stm32f401xe.s
+LINKERSCRIPT_FILE := STM32F401RETx_FLASH.ld
 
 # command of compile and remove
 CC := arm-none-eabi-gcc

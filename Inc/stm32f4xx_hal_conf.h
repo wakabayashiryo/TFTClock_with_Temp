@@ -5,7 +5,7 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2016 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
   *
   * Redistribution and use in source and binary forms, with or without modification,
   * are permitted provided that the following conditions are met:
@@ -40,8 +40,7 @@
  extern "C" {
 #endif
 
-#include "mxconstants.h" 
-
+#include "main.h"
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
 
@@ -52,6 +51,7 @@
 #define HAL_MODULE_ENABLED  
 
 /* #define HAL_ADC_MODULE_ENABLED   */
+/* #define HAL_CRYP_MODULE_ENABLED   */
 /* #define HAL_CAN_MODULE_ENABLED   */
 /* #define HAL_CRC_MODULE_ENABLED   */
 /* #define HAL_CRYP_MODULE_ENABLED   */
@@ -65,16 +65,17 @@
 /* #define HAL_SRAM_MODULE_ENABLED   */
 /* #define HAL_SDRAM_MODULE_ENABLED   */
 /* #define HAL_HASH_MODULE_ENABLED   */
-/* #define HAL_I2C_MODULE_ENABLED   */
+#define HAL_I2C_MODULE_ENABLED
 /* #define HAL_I2S_MODULE_ENABLED   */
 /* #define HAL_IWDG_MODULE_ENABLED   */
 /* #define HAL_LTDC_MODULE_ENABLED   */
 /* #define HAL_RNG_MODULE_ENABLED   */
-/* #define HAL_RTC_MODULE_ENABLED   */
+#define HAL_RTC_MODULE_ENABLED
 /* #define HAL_SAI_MODULE_ENABLED   */
 /* #define HAL_SD_MODULE_ENABLED   */
-/* #define HAL_SPI_MODULE_ENABLED   */
-/* #define HAL_TIM_MODULE_ENABLED   */
+/* #define HAL_MMC_MODULE_ENABLED   */
+#define HAL_SPI_MODULE_ENABLED
+#define HAL_TIM_MODULE_ENABLED
 #define HAL_UART_MODULE_ENABLED
 /* #define HAL_USART_MODULE_ENABLED   */
 /* #define HAL_IRDA_MODULE_ENABLED   */
@@ -104,7 +105,7 @@
   *        (when HSE is used as system clock source, directly or through the PLL).  
   */
 #if !defined  (HSE_VALUE) 
-  #define HSE_VALUE    ((uint32_t)25000000U) /*!< Value of the External oscillator in Hz */
+  #define HSE_VALUE    ((uint32_t)8000000U) /*!< Value of the External oscillator in Hz */
 #endif /* HSE_VALUE */
 
 #if !defined  (HSE_STARTUP_TIMEOUT)
@@ -220,20 +221,10 @@
 #define PHY_JABBER_DETECTION            ((uint16_t)0x0002U)  /*!< Jabber condition detected            */
   
 /* Section 4: Extended PHY Registers */
+#define PHY_SR                          ((uint16_t)0x10U)    /*!< PHY status register Offset                      */
 
-#define PHY_SR                          ((uint16_t)0x0010U)    /*!< PHY status register Offset                      */
-#define PHY_MICR                        ((uint16_t)0x0011U)    /*!< MII Interrupt Control Register                  */
-#define PHY_MISR                        ((uint16_t)0x0012U)    /*!< MII Interrupt Status and Misc. Control Register */
- 
-#define PHY_LINK_STATUS                 ((uint16_t)0x0001U)  /*!< PHY Link mask                                   */
 #define PHY_SPEED_STATUS                ((uint16_t)0x0002U)  /*!< PHY Speed mask                                  */
 #define PHY_DUPLEX_STATUS               ((uint16_t)0x0004U)  /*!< PHY Duplex mask                                 */
-
-#define PHY_MICR_INT_EN                 ((uint16_t)0x0002U)  /*!< PHY Enable interrupts                           */
-#define PHY_MICR_INT_OE                 ((uint16_t)0x0001U)  /*!< PHY Enable output interrupt events              */
-
-#define PHY_MISR_LINK_INT_EN            ((uint16_t)0x0020U)  /*!< Enable Interrupt on change of link status       */
-#define PHY_LINK_INTERRUPT              ((uint16_t)0x2000U)  /*!< PHY link status interrupt mask                  */
 
 /* ################## SPI peripheral configuration ########################## */
 
@@ -361,6 +352,10 @@
  #include "stm32f4xx_hal_sd.h"
 #endif /* HAL_SD_MODULE_ENABLED */
 
+#ifdef HAL_MMC_MODULE_ENABLED
+ #include "stm32f4xx_hal_mmc.h"
+#endif /* HAL_MMC_MODULE_ENABLED */
+
 #ifdef HAL_SPI_MODULE_ENABLED
  #include "stm32f4xx_hal_spi.h"
 #endif /* HAL_SPI_MODULE_ENABLED */
@@ -435,11 +430,11 @@
   *         If expr is true, it returns no value.
   * @retval None
   */
-  #define assert_param(expr) ((expr) ? (void)0 : assert_failed((uint8_t *)__FILE__, __LINE__))
+  #define assert_param(expr) ((expr) ? (void)0U : assert_failed((uint8_t *)__FILE__, __LINE__))
 /* Exported functions ------------------------------------------------------- */
   void assert_failed(uint8_t* file, uint32_t line);
 #else
-  #define assert_param(expr) ((void)0)
+  #define assert_param(expr) ((void)0U)
 #endif /* USE_FULL_ASSERT */    
 
 #ifdef __cplusplus
