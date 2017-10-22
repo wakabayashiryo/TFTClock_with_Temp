@@ -39,53 +39,80 @@
 #ifndef __MAIN_H
 #define __MAIN_H
   /* Includes ------------------------------------------------------------------*/
+#include "stm32f4xx_hal.h"
+#include <stdint.h>
 
 /* USER CODE BEGIN Includes */
-
 /* USER CODE END Includes */
 
 /* Private define ------------------------------------------------------------*/
 
 #define B1_Pin GPIO_PIN_13
 #define B1_GPIO_Port GPIOC
+#define USART_TX_Pin GPIO_PIN_2
+#define USART_TX_GPIO_Port GPIOA
+#define USART_RX_Pin GPIO_PIN_3
+#define USART_RX_GPIO_Port GPIOA
+
 #define LCD_RST_Pin GPIO_PIN_1
 #define LCD_RST_GPIO_Port GPIOC
 #define LCD_RD_Pin GPIO_PIN_0
 #define LCD_RD_GPIO_Port GPIOA
 #define LCD_WR_Pin GPIO_PIN_1
 #define LCD_WR_GPIO_Port GPIOA
-#define USART_TX_Pin GPIO_PIN_2
-#define USART_TX_GPIO_Port GPIOA
-#define USART_RX_Pin GPIO_PIN_3
-#define USART_RX_GPIO_Port GPIOA
 #define LCD_RS_Pin GPIO_PIN_4
 #define LCD_RS_GPIO_Port GPIOA
 #define LCD_CS_Pin GPIO_PIN_0
 #define LCD_CS_GPIO_Port GPIOB
-#define LCD_D6_Pin GPIO_PIN_10
-#define LCD_D6_GPIO_Port GPIOB
-#define LCD_D1_Pin GPIO_PIN_7
-#define LCD_D1_GPIO_Port GPIOC
-#define LCD_D7_Pin GPIO_PIN_8
-#define LCD_D7_GPIO_Port GPIOA
+
 #define LCD_D0_Pin GPIO_PIN_9
 #define LCD_D0_GPIO_Port GPIOA
+#define LCD_D1_Pin GPIO_PIN_7
+#define LCD_D1_GPIO_Port GPIOC
 #define LCD_D2_Pin GPIO_PIN_10
 #define LCD_D2_GPIO_Port GPIOA
+#define LCD_D3_Pin GPIO_PIN_3
+#define LCD_D3_GPIO_Port GPIOB
+#define LCD_D4_Pin GPIO_PIN_5
+#define LCD_D4_GPIO_Port GPIOB
+#define LCD_D5_Pin GPIO_PIN_4
+#define LCD_D5_GPIO_Port GPIOB
+#define LCD_D6_Pin GPIO_PIN_10
+#define LCD_D6_GPIO_Port GPIOB
+#define LCD_D7_Pin GPIO_PIN_8
+#define LCD_D7_GPIO_Port GPIOA
+
 #define TMS_Pin GPIO_PIN_13
 #define TMS_GPIO_Port GPIOA
 #define TCK_Pin GPIO_PIN_14
 #define TCK_GPIO_Port GPIOA
-#define LCD_D3_Pin GPIO_PIN_3
-#define LCD_D3_GPIO_Port GPIOB
-#define LCD_D5_Pin GPIO_PIN_4
-#define LCD_D5_GPIO_Port GPIOB
-#define LCD_D4_Pin GPIO_PIN_5
-#define LCD_D4_GPIO_Port GPIOB
 #define SD_CS_Pin GPIO_PIN_6
 #define SD_CS_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
+typedef struct
+{
+  uint32_t P0:1;
+  uint32_t P1:1;
+  uint32_t P2:1;
+  uint32_t P3:1;
+  uint32_t P4:1;
+  uint32_t P5:1;
+  uint32_t P6:1;
+  uint32_t P7:1;
+  uint32_t P8:1;
+  uint32_t P9:1;
+  uint32_t P10:1;
+  uint32_t P11:1;
+  uint32_t P12:1;
+  uint32_t P13:1;
+  uint32_t P14:1;
+  uint32_t P15:1;
+}GPIOx_Bits;
+
+#define GPIOA_Bits ((volatile GPIOx_Bits *) (&GPIOA->ODR))
+#define GPIOB_Bits ((volatile GPIOx_Bits *) (&GPIOB->ODR))
+#define GPIOC_Bits ((volatile GPIOx_Bits *) (&GPIOC->ODR))
 
 /* USER CODE END Private defines */
 
