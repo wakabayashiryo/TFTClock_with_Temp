@@ -110,13 +110,15 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_DMA_Init();
-  MX_SPI1_Init();
-  MX_USART2_UART_Init();
-  MX_I2C1_Init();
-  MX_RTC_Init();
-  MX_TIM1_Init();
-  MX_TIM2_Init();
+  ILI9325_Init();
+  
+  // MX_DMA_Init();
+  // MX_SPI1_Init();
+  // MX_USART2_UART_Init();
+  // MX_I2C1_Init();
+  // MX_RTC_Init();
+  // MX_TIM1_Init();
+  // MX_TIM2_Init();
 
   /* USER CODE BEGIN 2 */
 
@@ -124,8 +126,26 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  uint8_t strin[15];
+  uint8_t i;
+  // ILI9325_SetRotation(1);
   while (1)
   {
+    // sprintf(strin,"%3d",i++);
+    // ILI9325_DrawString(0,0,strin,ILI9325_BLUE,3);
+    // if(i>59)i=0;
+    // HAL_Delay(1000);
+    // // ILI9325_FillRect(0,0,100,50,ILI9325_BLACK);
+    // for(uint32_t x = 0;x<1;x++)
+    // {
+    //   for(uint32_t y = 0;y<100;y++)
+    //   {
+    //       ILI9325_DrawPixel(x,y,ILI9325_BLUE);
+    //   }
+    // }
+
+    // ILI9325_DrawString(0,0,"I Love The World",ILI9325_BLUE,5);
+    ILI9325_FillRect(0,0,1,100,ILI9325_BLUE);
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
@@ -152,9 +172,9 @@ void SystemClock_Config(void)
 
     /**Initializes the CPU, AHB and APB busses clocks 
     */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE|RCC_OSCILLATORTYPE_LSE;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSI|RCC_OSCILLATORTYPE_HSE;
   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
-  RCC_OscInitStruct.LSEState = RCC_LSE_BYPASS;
+  RCC_OscInitStruct.LSIState = RCC_LSI_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
   RCC_OscInitStruct.PLL.PLLM = 4;
@@ -181,7 +201,7 @@ void SystemClock_Config(void)
   }
 
   PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_RTC;
-  PeriphClkInitStruct.RTCClockSelection = RCC_RTCCLKSOURCE_LSE;
+  PeriphClkInitStruct.RTCClockSelection = RCC_RTCCLKSOURCE_LSI;
   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
   {
     _Error_Handler(__FILE__, __LINE__);

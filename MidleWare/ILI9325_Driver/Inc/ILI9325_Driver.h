@@ -49,8 +49,8 @@ extern "C" {
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
 
-#define ILI9325_PIXELWIDTH      100
-#define ILI9325_PIXELHEIGHT     100
+#define ILI9325_PIXELWIDTH      240
+#define ILI9325_PIXELHEIGHT     320
 
 #define ILI9325_RD_PIN    GPIOA_Bits->P0
 #define ILI9325_RST_PIN   GPIOC_Bits->P1
@@ -180,7 +180,7 @@ void ILI9325_DrawFastVLine(int16_t x, int16_t y, int16_t h, uint16_t color);
 //        w     horizontal width of the line
 //        color 16-bit color, which can be produced by ILI9325_Color565()
 // Output: none
-void ILI9325_DrawFastHLine(int16_t x, int16_t y, int16_t w, uint16_t color);
+void ILI9325_DrawFastHLine(int16_t x, int16_t y, int16_t length,uint16_t color);
 
 //------------ILI9325_FillScreen------------
 // Fill the screen with the given color.
@@ -198,7 +198,7 @@ void ILI9325_FillScreen(uint16_t color);
 //        h     vertical height of the rectangle
 //        color 16-bit color, which can be produced by ILI9325_Color565()
 // Output: none
-void ILI9325_FillRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color);
+void ILI9325_FillRect(int16_t x1, int16_t y1, int16_t w, int16_t h, uint16_t color);
 
 //------------ILI9325_Color565------------
 // Pass 8-bit (each) R,G,B and get back 16-bit packed color.
@@ -275,7 +275,7 @@ void fillmessage(uint32_t n);
 // Requires 2 bytes of transmission
 // Input: m new rotation value (0 to 3)
 // Output: none
-void ILI9325_SetRotation(uint8_t m);
+void ILI9325_SetRotation(uint8_t x);
 
 
 #ifdef __cplusplus
