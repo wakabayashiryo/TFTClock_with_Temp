@@ -1,6 +1,8 @@
 {
     "files.associations": {
         "main.h": "c",
-        "font.h": "c"
+        "font.h": "c",
+        "ili9325_driver.h": "c",
+        "stm32f4xx_hal.h": "c"
     }
 }

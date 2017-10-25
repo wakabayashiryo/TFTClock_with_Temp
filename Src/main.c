@@ -145,7 +145,7 @@ int main(void)
     // }
 
     // ILI9325_DrawString(0,0,"I Love The World",ILI9325_BLUE,5);
-    ILI9325_FillRect(0,0,1,100,ILI9325_BLUE);
+    ILI9325_DrawCircle(50,50,50,ILI9325_BLUE);
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */

@@ -5,6 +5,8 @@ static uint8_t Rotation = 0;           // 0 to 3
 static int16_t _width = ILI9325_PIXELWIDTH;   // this could probably be a constant, except it is used in Adafruit_GFX and depends on image Rotation
 static int16_t _height = ILI9325_PIXELHEIGHT;
 
+#define _swap_int16_t(a, b) { int16_t t = a; a = b; b = t; }
+
 #define WR_STROBO() ILI9325_WR_PIN = 0;ILI9325_WR_PIN = 1;
 
 typedef union
@@ -324,82 +326,189 @@ static void ILI9325_flood(uint16_t color, uint32_t len)
     ILI9325_CS_PIN = 1;    
   }
   
-  void ILI9325_DrawFastHLine(int16_t x, int16_t y, int16_t length,uint16_t color)
-  {
-    int16_t x2;
-  
-    // Initial off-screen clipping
-    if((length <= 0     ) ||
-       (y      <  0     ) || ( y                  >= _height) ||
-       (x      >= _width) || ((x2 = (x+length-1)) <  0      )) return;
-  
-    if(x < 0) {        // Clip left
-      length += x;
-      x       = 0;
-    }
-    if(x2 >= _width) { // Clip right
-      x2      = _width - 1;
-      length  = x2 - x + 1;
-    }
-  
-    setAddrWindow(x, y, x2, y);
-    ILI9325_flood(color, length);
-    setAddrWindow(0, 0, _width - 1, _height - 1);
+void ILI9325_DrawFastHLine(int16_t x, int16_t y, int16_t length,uint16_t color)
+{
+  int16_t x2;
+
+  // Initial off-screen clipping
+  if((length <= 0     ) ||
+      (y      <  0     ) || ( y                  >= _height) ||
+      (x      >= _width) || ((x2 = (x+length-1)) <  0      )) return;
+
+  if(x < 0) {        // Clip left
+    length += x;
+    x       = 0;
   }
-  
-  void ILI9325_DrawFastVLine(int16_t x, int16_t y, int16_t length,uint16_t color)
-  {
-    int16_t y2;
-  
-    // Initial off-screen clipping
-    if((length <= 0      ) ||
-       (x      <  0      ) || ( x                  >= _width) ||
-       (y      >= _height) || ((y2 = (y+length-1)) <  0     )) return;
-    if(y < 0) {         // Clip top
-      length += y;
-      y       = 0;
-    }
-    if(y2 >= _height) { // Clip bottom
-      y2      = _height - 1;
-      length  = y2 - y + 1;
-    }
-  
-    setAddrWindow(x, y, x, y2);
-    ILI9325_flood(color, length);
-    setAddrWindow(0, 0, _width - 1, _height - 1);
+  if(x2 >= _width) { // Clip right
+    x2      = _width - 1;
+    length  = x2 - x + 1;
   }
-  
-  void ILI9325_FillRect(int16_t x1, int16_t y1, int16_t w, int16_t h, 
+
+  setAddrWindow(x, y, x2, y);
+  ILI9325_flood(color, length);
+  setAddrWindow(0, 0, _width - 1, _height - 1);
+}
+
+void ILI9325_DrawFastVLine(int16_t x, int16_t y, int16_t length,uint16_t color)
+{
+  int16_t y2;
+
+  // Initial off-screen clipping
+  if((length <= 0      ) ||
+      (x      <  0      ) || ( x                  >= _width) ||
+      (y      >= _height) || ((y2 = (y+length-1)) <  0     )) return;
+  if(y < 0) {         // Clip top
+    length += y;
+    y       = 0;
+  }
+  if(y2 >= _height) { // Clip bottom
+    y2      = _height - 1;
+    length  = y2 - y + 1;
+  }
+
+  setAddrWindow(x, y, x, y2);
+  ILI9325_flood(color, length);
+  setAddrWindow(0, 0, _width - 1, _height - 1);
+}
+
+void ILI9325_FillRect(int16_t x1, int16_t y1, int16_t w, int16_t h, 
     uint16_t fillcolor) {
-    int16_t  x2, y2;
-  
-    // Initial off-screen clipping
-    if( (w            <= 0     ) ||  (h             <= 0      ) ||
-        (x1           >= _width) ||  (y1            >= _height) ||
-       ((x2 = x1+w-1) <  0     ) || ((y2  = y1+h-1) <  0      )) return;
-    if(x1 < 0) { // Clip left
-      w += x1;
-      x1 = 0;
-    }
-    if(y1 < 0) { // Clip top
-      h += y1;
-      y1 = 0;
-    }
-    if(x2 >= _width) { // Clip right
-      x2 = _width - 1;
-      w  = x2 - x1 + 1;
-    }
-    if(y2 >= _height) { // Clip bottom
-      y2 = _height - 1;
-      h  = y2 - y1 + 1;
-    }
-  
-    setAddrWindow(x1, y1, x2, y2);
-    ILI9325_flood(fillcolor, (uint32_t)w * (uint32_t)h);
-    setAddrWindow(0, 0, _width - 1, _height - 1);
+  int16_t  x2, y2;
+
+  // Initial off-screen clipping
+  if( (w            <= 0     ) ||  (h             <= 0      ) ||
+      (x1           >= _width) ||  (y1            >= _height) ||
+      ((x2 = x1+w-1) <  0     ) || ((y2  = y1+h-1) <  0      )) return;
+  if(x1 < 0) { // Clip left
+    w += x1;
+    x1 = 0;
   }
-  
-  void ILI9325_FillScreen(uint16_t color)
+  if(y1 < 0) { // Clip top
+    h += y1;
+    y1 = 0;
+  }
+  if(x2 >= _width) { // Clip right
+    x2 = _width - 1;
+    w  = x2 - x1 + 1;
+  }
+  if(y2 >= _height) { // Clip bottom
+    y2 = _height - 1;
+    h  = y2 - y1 + 1;
+  }
+
+  setAddrWindow(x1, y1, x2, y2);
+  ILI9325_flood(fillcolor, (uint32_t)w * (uint32_t)h);
+  setAddrWindow(0, 0, _width - 1, _height - 1);
+}
+
+// Bresenham's algorithm - thx wikpedia
+void ILI9325_WriteLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1,uint16_t color) 
+{
+  int16_t steep = abs(y1 - y0) > abs(x1 - x0);
+  if (steep) 
+  {
+    _swap_int16_t(x0, y0);
+    _swap_int16_t(x1, y1);
+  }
+
+  if (x0 > x1) 
+  {
+    _swap_int16_t(x0, x1);
+    _swap_int16_t(y0, y1);
+  }
+
+  int16_t dx, dy;
+  dx = x1 - x0;
+  dy = abs(y1 - y0);
+
+  int16_t err = dx / 2;
+  int16_t ystep;
+
+  if (y0 < y1) 
+  {
+    ystep = 1;
+  } 
+  else 
+  {
+    ystep = -1;
+  }
+
+  for (; x0<=x1; x0++) 
+  {
+    if (steep) 
+    {
+        ILI9325_DrawPixel(y0, x0, color);
+    } 
+    else 
+    {
+        ILI9325_DrawPixel(x0, y0, color);
+    }
+    err -= dy;
+    if (err < 0) 
+    {
+        y0 += ystep;
+        err += dx;
+    }
+  }
+}
+
+void ILI9325_DrawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1,uint16_t color)
+{
+// Update in subclasses if desired!
+  if(x0 == x1)
+  {
+      if(y0 > y1) _swap_int16_t(y0, y1);
+      ILI9325_DrawFastVLine(x0, y0, y1 - y0 + 1, color);
+  }
+  else if(y0 == y1)
+  {
+      if(x0 > x1) _swap_int16_t(x0, x1);
+      ILI9325_DrawFastHLine(x0, y0, x1 - x0 + 1, color);
+  }
+  else
+  {
+      ILI9325_WriteLine(x0, y0, x1, y1, color);
+  }
+}
+
+// Draw a circle outline
+void ILI9325_DrawCircle(int16_t x0, int16_t y0, int16_t r,uint16_t color)
+{
+  int16_t f = 1 - r;
+  int16_t ddF_x = 1;
+  int16_t ddF_y = -2 * r;
+  int16_t x = 0;
+  int16_t y = r;
+
+  ILI9325_DrawPixel(x0  , y0+r, color);
+  ILI9325_DrawPixel(x0  , y0-r, color);
+  ILI9325_DrawPixel(x0+r, y0  , color);
+  ILI9325_DrawPixel(x0-r, y0  , color);
+
+  while (x<y) 
+  {
+      if (f >= 0) 
+      {
+          y--;
+          ddF_y += 2;
+          f += ddF_y;
+      }
+      x++;
+      ddF_x += 2;
+      f += ddF_x;
+
+      ILI9325_DrawPixel(x0 + x, y0 + y, color);
+      ILI9325_DrawPixel(x0 - x, y0 + y, color);
+      ILI9325_DrawPixel(x0 + x, y0 - y, color);
+      ILI9325_DrawPixel(x0 - x, y0 - y, color);
+      ILI9325_DrawPixel(x0 + y, y0 + x, color);
+      ILI9325_DrawPixel(x0 - y, y0 + x, color);
+      ILI9325_DrawPixel(x0 + y, y0 - x, color);
+      ILI9325_DrawPixel(x0 - y, y0 - x, color);
+  }
+}
+
+void ILI9325_FillScreen(uint16_t color)
 {
       
       // For the 932X, a full-screen address window is already the default
