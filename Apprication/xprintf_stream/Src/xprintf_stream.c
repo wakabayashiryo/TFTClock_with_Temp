@@ -3,6 +3,7 @@
 UART_HandleTypeDef huart2;
 
 static uint8_t *pointBuff;
+static uint8_t FrontBuff[MAXBUFFERSIZE];
 static uint32_t BufferSize;
 static uint32_t wp = 0;
 
@@ -13,7 +14,7 @@ static void xStream_Write_Buff(uint8_t c)
   wp++;
 
   if(wp>(BufferSize-1))
-    xStream_Fflush();
+    xStream_fflush();
 }
 static inline void xStream_Clear_Buff(uint32_t size)
 {
@@ -29,15 +30,17 @@ void xStream_Setbuf(uint8_t *pBuff,uint32_t size)
   xdev_out(xStream_Write_Buff);
 }
 
-void xStream_Fflush(void)
+void xStream_fflush(void)
 {
   uint32_t stln = strlen((char*)pointBuff);
 
   HAL_StatusTypeDef CheckStatus;
 
+  memcpy(FrontBuff,pointBuff,stln);
+
   if(stln>0)
   {
-    CheckStatus = HAL_UART_Transmit_DMA(&huart2,pointBuff,stln);
+    CheckStatus = HAL_UART_Transmit_DMA(&huart2,FrontBuff,stln);
     if(CheckStatus==HAL_ERROR)
       _Error_Handler(__FILE__, __LINE__);
 

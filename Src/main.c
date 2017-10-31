@@ -135,7 +135,7 @@ int main(void)
 
   /* USER CODE BEGIN 3 */
     xprintf("Hellow World\n");
-    xStream_Fflush();
+    xStream_fflush();
     // HAL_Delay(1);
   }
   /* USER CODE END 3 */
