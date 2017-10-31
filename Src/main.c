@@ -57,7 +57,7 @@ DMA_HandleTypeDef hdma_spi1_tx;
 TIM_HandleTypeDef htim1;
 TIM_HandleTypeDef htim2;
 
-UART_HandleTypeDef huart2;
+extern UART_HandleTypeDef huart2;
 DMA_HandleTypeDef hdma_usart2_tx;
 
 /* USER CODE BEGIN PV */
@@ -110,11 +110,13 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  ILI9325_Init();
+  // ILI9325_Init();
   
-  // MX_DMA_Init();
+  MX_DMA_Init();
   // MX_SPI1_Init();
-  // MX_USART2_UART_Init();
+  MX_USART2_UART_Init();
+  uint8_t stream_buff[1000];
+  xStream_Setbuf(stream_buff,sizeof(stream_buff));
   // MX_I2C1_Init();
   // MX_RTC_Init();
   // MX_TIM1_Init();
@@ -126,30 +128,15 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  uint8_t strin[15];
-  uint8_t i;
   // ILI9325_SetRotation(1);
   while (1)
   {
-    // sprintf(strin,"%3d",i++);
-    // ILI9325_DrawString(0,0,strin,ILI9325_BLUE,3);
-    // if(i>59)i=0;
-    // HAL_Delay(1000);
-    // // ILI9325_FillRect(0,0,100,50,ILI9325_BLACK);
-    // for(uint32_t x = 0;x<1;x++)
-    // {
-    //   for(uint32_t y = 0;y<100;y++)
-    //   {
-    //       ILI9325_DrawPixel(x,y,ILI9325_BLUE);
-    //   }
-    // }
-
-    // ILI9325_DrawString(0,0,"I Love The World",ILI9325_BLUE,5);
-    ILI9325_DrawCircle(50,50,50,ILI9325_BLUE);
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
-
+    xprintf("Hellow World\n");
+    xStream_Fflush();
+    // HAL_Delay(1);
   }
   /* USER CODE END 3 */
 

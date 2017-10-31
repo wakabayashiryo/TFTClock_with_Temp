@@ -15,7 +15,7 @@
 #project configuration
 PROJECT := TFTClock_with_Temp
 OPTIMIZE := -O0 -g3
-HARDFP := 0
+HARDFP := 1
 DEVICENAME := STM32F401xE
 STARTUP_FILE := startup_stm32f401xe.s
 LINKERSCRIPT_FILE := STM32F401RETx_FLASH.ld
