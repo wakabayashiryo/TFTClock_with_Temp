@@ -45,6 +45,7 @@
 #include "xprintf.h"
 #include "ILI9325_Driver.h"
 #include "xprintf_stream.h"
+#include "SHT31.h"
 
 /* USER CODE BEGIN Includes */
 /* USER CODE END Includes */
