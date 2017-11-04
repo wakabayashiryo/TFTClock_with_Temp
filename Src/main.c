@@ -44,7 +44,7 @@
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
-I2C_HandleTypeDef hi2c1;
+extern I2C_HandleTypeDef hi2c1;
 DMA_HandleTypeDef hdma_i2c1_rx;
 DMA_HandleTypeDef hdma_i2c1_tx;
 
@@ -113,11 +113,15 @@ int main(void)
   // ILI9325_Init();
   
   MX_DMA_Init();
+  
   // MX_SPI1_Init();
+  
   MX_USART2_UART_Init();
   uint8_t stream_buff[1000];
   xStream_Setbuf(stream_buff,sizeof(stream_buff));
-  // MX_I2C1_Init();
+
+  MX_I2C1_Init();
+  SHT31_Init();
   // MX_RTC_Init();
   // MX_TIM1_Init();
   // MX_TIM2_Init();
@@ -128,15 +132,18 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  // ILI9325_SetRotation(1);
+  float temp,humid;
   while (1)
   {
+    SHT31_Read_Data();
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
-    xprintf("Hellow World\n");
+    temp = SHT31_Get_Temperature();
+    humid = SHT31_Get_Humidity();
+
+    xprintf("%d.%d %d.%d\n",(int16_t)temp,((int16_t)(temp*100)%100),(int16_t)humid,((int16_t)(humid*100)%100));
     xStream_fflush();
-    // HAL_Delay(1);
   }
   /* USER CODE END 3 */
 

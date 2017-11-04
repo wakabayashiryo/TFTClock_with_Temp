@@ -3,6 +3,8 @@
         "main.h": "c",
         "font.h": "c",
         "ili9325_driver.h": "c",
-        "stm32f4xx_hal.h": "c"
+        "stm32f4xx_hal.h": "c",
+        "xprintf.h": "c",
+        "xprintf_stream.h": "c"
     }
 }
