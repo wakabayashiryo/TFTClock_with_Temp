@@ -44,7 +44,7 @@
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
-extern I2C_HandleTypeDef hi2c1;
+I2C_HandleTypeDef hi2c1;
 DMA_HandleTypeDef hdma_i2c1_rx;
 DMA_HandleTypeDef hdma_i2c1_tx;
 
@@ -57,7 +57,7 @@ DMA_HandleTypeDef hdma_spi1_tx;
 TIM_HandleTypeDef htim1;
 TIM_HandleTypeDef htim2;
 
-extern UART_HandleTypeDef huart2;
+UART_HandleTypeDef huart2;
 DMA_HandleTypeDef hdma_usart2_tx;
 
 /* USER CODE BEGIN PV */
@@ -110,21 +110,13 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  // ILI9325_Init();
-  
   MX_DMA_Init();
-  
-  // MX_SPI1_Init();
-  
+  MX_SPI1_Init();
   MX_USART2_UART_Init();
-  uint8_t stream_buff[1000];
-  xStream_Setbuf(stream_buff,sizeof(stream_buff));
-
   MX_I2C1_Init();
-  SHT31_Init();
-  // MX_RTC_Init();
-  // MX_TIM1_Init();
-  // MX_TIM2_Init();
+  MX_RTC_Init();
+  MX_TIM1_Init();
+  MX_TIM2_Init();
 
   /* USER CODE BEGIN 2 */
 
@@ -132,18 +124,12 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  float temp,humid;
   while (1)
   {
-    SHT31_Read_Data();
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
-    temp = SHT31_Get_Temperature();
-    humid = SHT31_Get_Humidity();
 
-    xprintf("%d.%d %d.%d\n",(int16_t)temp,((int16_t)(temp*100)%100),(int16_t)humid,((int16_t)(humid*100)%100));
-    xStream_fflush();
   }
   /* USER CODE END 3 */
 
