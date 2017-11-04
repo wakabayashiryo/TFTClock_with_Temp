@@ -44,9 +44,10 @@
 #include "xprintf.h"
 #include "main.h"
 /* USER CODE BEGIN Includes */
+#define MAXBUFFERSIZE 1000
 
 void xStream_Setbuf(uint8_t *pBuff,uint32_t size);
-void xStream_Fflush(void);
+void xStream_fflush(void);
 /* USER CODE END Includes */
 
 /* Private define ------------------------------------------------------------*/
