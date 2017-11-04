@@ -57,7 +57,7 @@ DMA_HandleTypeDef hdma_spi1_tx;
 TIM_HandleTypeDef htim1;
 TIM_HandleTypeDef htim2;
 
-extern UART_HandleTypeDef huart2;
+UART_HandleTypeDef huart2;
 DMA_HandleTypeDef hdma_usart2_tx;
 
 /* USER CODE BEGIN PV */
@@ -110,17 +110,13 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  // ILI9325_Init();
-  
   MX_DMA_Init();
-  // MX_SPI1_Init();
+  MX_SPI1_Init();
   MX_USART2_UART_Init();
-  uint8_t stream_buff[1000];
-  xStream_Setbuf(stream_buff,sizeof(stream_buff));
-  // MX_I2C1_Init();
-  // MX_RTC_Init();
-  // MX_TIM1_Init();
-  // MX_TIM2_Init();
+  MX_I2C1_Init();
+  MX_RTC_Init();
+  MX_TIM1_Init();
+  MX_TIM2_Init();
 
   /* USER CODE BEGIN 2 */
 
@@ -128,15 +124,12 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  // ILI9325_SetRotation(1);
   while (1)
   {
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
-    xprintf("Hellow World\n");
-    xStream_Fflush();
-    // HAL_Delay(1);
+
   }
   /* USER CODE END 3 */
 
