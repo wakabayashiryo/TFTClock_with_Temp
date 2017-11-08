@@ -49,8 +49,6 @@ DMA_HandleTypeDef hdma_i2c1_rx;
 DMA_HandleTypeDef hdma_i2c1_tx;
 
 RTC_HandleTypeDef hrtc;
-RTC_TimeTypeDef stime;
-RTC_DateTypeDef sdate;
 
 SPI_HandleTypeDef hspi1;
 DMA_HandleTypeDef hdma_spi1_rx;
@@ -122,9 +120,9 @@ int main(void)
   uint8_t stream_buff[1000];
   xStream_Setbuf(stream_buff,sizeof(stream_buff));
 
-  // MX_I2C1_Init();
-  // SHT31_Init();
-  MX_RTC_Init();
+  MX_I2C1_Init();
+  SHT31_Init();
+  // MX_RTC_Init();
   // MX_TIM1_Init();
   // MX_TIM2_Init();
 
@@ -134,20 +132,18 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  sdate.Year = 17;
-  sdate.Month = 11;
-  sdate.Date = 5;
-  sdate.WeekDay = RTC_WEEKDAY_SUNDAY;
-
-  stime.Hours = 15;
-  stime.Minutes = 25;
-  stime.Seconds = 0;
-
-  RTC_Set_Calendar(&hrtc,&sdate,&stime);
-
+  float temp,humid;
   while (1)
   {
-   RTC_Show_Calendar(&hrtc,&sdate,&stime);
+    SHT31_Read_Data();
+  /* USER CODE END WHILE */
+
+  /* USER CODE BEGIN 3 */
+    temp = SHT31_Get_Temperature();
+    humid = SHT31_Get_Humidity();
+
+    xprintf("%d.%d %d.%d\n",(int16_t)temp,((int16_t)(temp*100)%100),(int16_t)humid,((int16_t)(humid*100)%100));
+    xStream_fflush();
   }
   /* USER CODE END 3 */
 
@@ -240,6 +236,10 @@ static void MX_I2C1_Init(void)
 /* RTC init function */
 static void MX_RTC_Init(void)
 {
+
+  RTC_TimeTypeDef sTime;
+  RTC_DateTypeDef sDate;
+
     /**Initialize RTC Only 
     */
   hrtc.Instance = RTC;
@@ -256,27 +256,26 @@ static void MX_RTC_Init(void)
 
     /**Initialize RTC and set the Time and Date 
     */
-  if(HAL_RTCEx_BKUPRead(&hrtc, RTC_BKP_DR0) != 0x32F2)
+  if(HAL_RTCEx_BKUPRead(&hrtc, RTC_BKP_DR0) != 0x32F2){
+  sTime.Hours = 0x0;
+  sTime.Minutes = 0x0;
+  sTime.Seconds = 0x0;
+  sTime.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
+  sTime.StoreOperation = RTC_STOREOPERATION_RESET;
+  if (HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BCD) != HAL_OK)
   {
-    stime.Hours = 0x0;
-    stime.Minutes = 0x0;
-    stime.Seconds = 0x0;
-    stime.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
-    stime.StoreOperation = RTC_STOREOPERATION_RESET;
-    if (HAL_RTC_SetTime(&hrtc, &stime, RTC_FORMAT_BCD) != HAL_OK)
-    {
-      _Error_Handler(__FILE__, __LINE__);
-    }
+    _Error_Handler(__FILE__, __LINE__);
+  }
 
-    sdate.WeekDay = RTC_WEEKDAY_MONDAY;
-    sdate.Month = RTC_MONTH_JANUARY;
-    sdate.Date = 0x1;
-    sdate.Year = 0x17;
+  sDate.WeekDay = RTC_WEEKDAY_MONDAY;
+  sDate.Month = RTC_MONTH_JANUARY;
+  sDate.Date = 0x1;
+  sDate.Year = 0x17;
 
-    if (HAL_RTC_SetDate(&hrtc, &sdate, RTC_FORMAT_BCD) != HAL_OK)
-    {
-      _Error_Handler(__FILE__, __LINE__);
-    }
+  if (HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BCD) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
 
     HAL_RTCEx_BKUPWrite(&hrtc,RTC_BKP_DR0,0x32F2);
   }
