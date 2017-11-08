@@ -5,6 +5,10 @@
         "ili9325_driver.h": "c",
         "stm32f4xx_hal.h": "c",
         "xprintf.h": "c",
-        "xprintf_stream.h": "c"
+        "xprintf_stream.h": "c",
+        "rtc_operation.h": "c",
+        "stm32f4xx_hal_conf.h": "c",
+        "stm32f4xx_hal_rtc.h": "c",
+        "stm32f4xx_hal_sai.h": "c"
     }
 }

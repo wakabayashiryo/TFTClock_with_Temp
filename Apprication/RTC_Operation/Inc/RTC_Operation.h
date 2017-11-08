@@ -1,6 +1,6 @@
 /**
   ******************************************************************************
-  * File Name          : main.h
+  * File Name          : RTC_Operation.h
   * Description        : This file contains the common defines of the application
   ******************************************************************************
   ** This notice applies to any and all portions of this file
@@ -36,103 +36,20 @@
   ******************************************************************************
   */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __MAIN_H
-#define __MAIN_H
+#ifndef __RTC_OPERATION_H
+#define __RTC_OPERATION_H
   /* Includes ------------------------------------------------------------------*/
-#include "stm32f4xx_hal.h"
-#include <stdint.h>
-#include <stdlib.h>
-#include <math.h>
-#include "xprintf.h"
-#include "ILI9325_Driver.h"
-#include "xprintf_stream.h"
-#include "SHT31.h"
-#include "RTC_Operation.h"
+#include "stm32f4xx_hal_rtc.h"
+#include "main.h"
 
 /* USER CODE BEGIN Includes */
+void RTC_Set_Calendar(RTC_HandleTypeDef *hrtc,RTC_DateTypeDef *sDate,RTC_TimeTypeDef *sTime);
+void RTC_Get_Calendar(RTC_HandleTypeDef *hrtc,RTC_DateTypeDef *sDate,RTC_TimeTypeDef *sTime);  
+const char* RTC_Get_WeekDay_Char(RTC_DateTypeDef *sDate);
+void RTC_Show_Calendar(RTC_HandleTypeDef *hrtc,RTC_DateTypeDef *sDate,RTC_TimeTypeDef *sTime);
 /* USER CODE END Includes */
 
 /* Private define ------------------------------------------------------------*/
 
-#define B1_Pin GPIO_PIN_13
-#define B1_GPIO_Port GPIOC
-#define USART_TX_Pin GPIO_PIN_2
-#define USART_TX_GPIO_Port GPIOA
-#define USART_RX_Pin GPIO_PIN_3
-#define USART_RX_GPIO_Port GPIOA
-
-#define LCD_RST_Pin GPIO_PIN_1
-#define LCD_RST_GPIO_Port GPIOC
-#define LCD_RD_Pin GPIO_PIN_0
-#define LCD_RD_GPIO_Port GPIOA
-#define LCD_WR_Pin GPIO_PIN_1
-#define LCD_WR_GPIO_Port GPIOA
-#define LCD_RS_Pin GPIO_PIN_4
-#define LCD_RS_GPIO_Port GPIOA
-#define LCD_CS_Pin GPIO_PIN_0
-#define LCD_CS_GPIO_Port GPIOB
-
-#define LCD_D0_Pin GPIO_PIN_9
-#define LCD_D0_GPIO_Port GPIOA
-#define LCD_D1_Pin GPIO_PIN_7
-#define LCD_D1_GPIO_Port GPIOC
-#define LCD_D2_Pin GPIO_PIN_10
-#define LCD_D2_GPIO_Port GPIOA
-#define LCD_D3_Pin GPIO_PIN_3
-#define LCD_D3_GPIO_Port GPIOB
-#define LCD_D4_Pin GPIO_PIN_5
-#define LCD_D4_GPIO_Port GPIOB
-#define LCD_D5_Pin GPIO_PIN_4
-#define LCD_D5_GPIO_Port GPIOB
-#define LCD_D6_Pin GPIO_PIN_10
-#define LCD_D6_GPIO_Port GPIOB
-#define LCD_D7_Pin GPIO_PIN_8
-#define LCD_D7_GPIO_Port GPIOA
-
-#define TMS_Pin GPIO_PIN_13
-#define TMS_GPIO_Port GPIOA
-#define TCK_Pin GPIO_PIN_14
-#define TCK_GPIO_Port GPIOA
-#define SD_CS_Pin GPIO_PIN_6
-#define SD_CS_GPIO_Port GPIOB
-
-/* USER CODE BEGIN Private defines */
-typedef struct
-{
-  uint32_t P0:1;
-  uint32_t P1:1;
-  uint32_t P2:1;
-  uint32_t P3:1;
-  uint32_t P4:1;
-  uint32_t P5:1;
-  uint32_t P6:1;
-  uint32_t P7:1;
-  uint32_t P8:1;
-  uint32_t P9:1;
-  uint32_t P10:1;
-  uint32_t P11:1;
-  uint32_t P12:1;
-  uint32_t P13:1;
-  uint32_t P14:1;
-  uint32_t P15:1;
-}GPIOx_Bits;
-
-#define GPIOA_Bits ((volatile GPIOx_Bits *) (&GPIOA->ODR))
-#define GPIOB_Bits ((volatile GPIOx_Bits *) (&GPIOB->ODR))
-#define GPIOC_Bits ((volatile GPIOx_Bits *) (&GPIOC->ODR))
-
-/* USER CODE END Private defines */
-void _Error_Handler(char *, int);
-
-#define Error_Handler() _Error_Handler(__FILE__, __LINE__)
-
-/**
-  * @}
-  */ 
-
-/**
-  * @}
-*/ 
-
-#endif /* __MAIN_H */
+#endif /* RTC_Operation_H */
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
