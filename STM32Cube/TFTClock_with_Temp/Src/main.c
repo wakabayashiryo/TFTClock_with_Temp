@@ -35,7 +35,6 @@
   *
   ******************************************************************************
   */
-
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "stm32f4xx_hal.h"
@@ -50,8 +49,6 @@ DMA_HandleTypeDef hdma_i2c1_rx;
 DMA_HandleTypeDef hdma_i2c1_tx;
 
 RTC_HandleTypeDef hrtc;
-RTC_TimeTypeDef sTime;
-RTC_DateTypeDef sDate;
 
 SPI_HandleTypeDef hspi1;
 DMA_HandleTypeDef hdma_spi1_rx;
@@ -75,9 +72,9 @@ static void MX_DMA_Init(void);
 static void MX_SPI1_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_I2C1_Init(void);
-static void MX_RTC_Init(void);
 static void MX_TIM1_Init(void);
 static void MX_TIM2_Init(void);
+static void MX_RTC_Init(void);
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
@@ -117,9 +114,9 @@ int main(void)
   MX_SPI1_Init();
   MX_USART2_UART_Init();
   MX_I2C1_Init();
-  MX_RTC_Init();
   MX_TIM1_Init();
   MX_TIM2_Init();
+  MX_RTC_Init();
 
   /* USER CODE BEGIN 2 */
 
@@ -157,7 +154,7 @@ void SystemClock_Config(void)
     */
   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE|RCC_OSCILLATORTYPE_LSE;
   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
-  RCC_OscInitStruct.LSEState = RCC_LSE_BYPASS;
+  RCC_OscInitStruct.LSEState = RCC_LSE_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
   RCC_OscInitStruct.PLL.PLLM = 4;
@@ -226,6 +223,9 @@ static void MX_I2C1_Init(void)
 static void MX_RTC_Init(void)
 {
 
+  RTC_TimeTypeDef sTime;
+  RTC_DateTypeDef sDate;
+
     /**Initialize RTC Only 
     */
   hrtc.Instance = RTC;
@@ -243,10 +243,20 @@ static void MX_RTC_Init(void)
     /**Initialize RTC and set the Time and Date 
     */
   if(HAL_RTCEx_BKUPRead(&hrtc, RTC_BKP_DR0) != 0x32F2){
+  sTime.Hours = 0x0;
+  sTime.Minutes = 0x0;
+  sTime.Seconds = 0x0;
+  sTime.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
+  sTime.StoreOperation = RTC_STOREOPERATION_RESET;
   if (HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BCD) != HAL_OK)
   {
     _Error_Handler(__FILE__, __LINE__);
   }
+
+  sDate.WeekDay = RTC_WEEKDAY_MONDAY;
+  sDate.Month = RTC_MONTH_JANUARY;
+  sDate.Date = 0x1;
+  sDate.Year = 0x0;
 
   if (HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BCD) != HAL_OK)
   {

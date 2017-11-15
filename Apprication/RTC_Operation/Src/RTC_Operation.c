@@ -17,8 +17,6 @@ const char *weekday_char[] = {
   */
   void RTC_Set_Calendar(RTC_HandleTypeDef *hrtc,RTC_DateTypeDef *sDate,RTC_TimeTypeDef *sTime)
   { 
-    if(HAL_RTCEx_BKUPRead(hrtc, RTC_BKP_DR0) != 0x32F2)
-    {
       if(HAL_RTC_SetDate(hrtc,sDate,RTC_FORMAT_BCD) != HAL_OK)
       {
         /* Initialization Error */
@@ -33,7 +31,6 @@ const char *weekday_char[] = {
     
       /*##-3- Writes a data in a RTC Backup data Register1 #######################*/
       HAL_RTCEx_BKUPWrite(hrtc, RTC_BKP_DR1, 0x32F2);
-    }
   }
   
   void RTC_Get_Calendar(RTC_HandleTypeDef *hrtc,RTC_DateTypeDef *sDate,RTC_TimeTypeDef *sTime)
