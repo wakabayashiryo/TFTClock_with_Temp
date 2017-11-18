@@ -17,13 +17,13 @@ const char *weekday_char[] = {
   */
   void RTC_Set_Calendar(RTC_HandleTypeDef *hrtc,RTC_DateTypeDef *sDate,RTC_TimeTypeDef *sTime)
   { 
-      if(HAL_RTC_SetDate(hrtc,sDate,RTC_FORMAT_BCD) != HAL_OK)
+      if(HAL_RTC_SetDate(hrtc,sDate,RTC_FORMAT_BIN) != HAL_OK)
       {
         /* Initialization Error */
         Error_Handler();
       }
     
-      if (HAL_RTC_SetTime(hrtc, sTime, RTC_FORMAT_BCD) != HAL_OK)
+      if (HAL_RTC_SetTime(hrtc, sTime, RTC_FORMAT_BIN) != HAL_OK)
       {
         /* Initialization Error */
         Error_Handler();
@@ -36,13 +36,13 @@ const char *weekday_char[] = {
   void RTC_Get_Calendar(RTC_HandleTypeDef *hrtc,RTC_DateTypeDef *sDate,RTC_TimeTypeDef *sTime)
   {  
     /* Get the RTC current Time */
-    if(HAL_RTC_GetTime(hrtc, sTime, RTC_FORMAT_BCD) != HAL_OK)
+    if(HAL_RTC_GetTime(hrtc, sTime, RTC_FORMAT_BIN) != HAL_OK)
     {
       /* Initialization Error */
       Error_Handler();
     }
     /* Get the RTC current Date */
-    if(HAL_RTC_GetDate(hrtc, sDate, RTC_FORMAT_BCD) != HAL_OK)
+    if(HAL_RTC_GetDate(hrtc, sDate, RTC_FORMAT_BIN) != HAL_OK)
     {
       /* Initialization Error */
       Error_Handler();

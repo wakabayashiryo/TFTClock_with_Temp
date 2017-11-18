@@ -136,12 +136,12 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   sdate.Year = 17;
   sdate.Month = 11;
-  sdate.Date = 5;
+  sdate.Date = 18;
   sdate.WeekDay = RTC_WEEKDAY_SUNDAY;
 
-  stime.Hours = 15;
-  stime.Minutes = 25;
-  stime.Seconds = 0;
+  stime.Hours = 9;
+  stime.Minutes = 50;
+  stime.Seconds = 10;
 
   RTC_Set_Calendar(&hrtc,&sdate,&stime);
 
