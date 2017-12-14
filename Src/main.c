@@ -134,16 +134,18 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+
+  /*For testing sample date*/
   sdate.Year = 17;
-  sdate.Month = 11;
-  sdate.Date = 18;
+  sdate.Month = 12;
+  sdate.Date = 15;
   sdate.WeekDay = RTC_WEEKDAY_SUNDAY;
 
-  stime.Hours = 9;
-  stime.Minutes = 50;
-  stime.Seconds = 10;
+  stime.Hours = 6;
+  stime.Minutes = 11;
+  stime.Seconds = 00;
 
-  RTC_Set_Calendar(&hrtc,&sdate,&stime);
+  // RTC_Set_Calendar(&hrtc,&sdate,&stime);
 
   while (1)
   {

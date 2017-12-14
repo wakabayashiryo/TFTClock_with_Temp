@@ -69,7 +69,7 @@ const char *weekday_char[] = {
     /* Display date Format : mm-dd-yy */
     xprintf("Date:%4d-%02d-%02d[%s] ",2000 + sDate->Year,sDate->Month,sDate->Date,RTC_Get_WeekDay_Char(sDate));
     /* Display time Format : hh:mm:ss */
-    xprintf("Time:%2d:%2d:%2d\n", sTime->Hours, sTime->Minutes, sTime->Seconds);
+    xprintf("Time:%02d:%02d:%02d\n", sTime->Hours, sTime->Minutes, sTime->Seconds);
     
     xStream_fflush();
   }
