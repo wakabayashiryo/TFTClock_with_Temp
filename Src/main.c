@@ -110,7 +110,7 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  // ILI9325_Init();
+  ILI9325_Init();
   
   MX_DMA_Init();
   
@@ -135,6 +135,7 @@ int main(void)
   float temp,humid;
   while (1)
   {
+    ILI9325_DrawCircle(100,100,50,ILI9325_CYAN);
     SHT31_Read_Data();
   /* USER CODE END WHILE */
 
