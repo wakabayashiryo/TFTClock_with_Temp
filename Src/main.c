@@ -122,9 +122,11 @@ int main(void)
   uint8_t stream_buff[1000];
   xStream_Setbuf(stream_buff,sizeof(stream_buff));
 
-  // MX_I2C1_Init();
+  MX_I2C1_Init();
+  TouchSense_Set_Configuration(1000,1000,100);
+
   // SHT31_Init();
-  MX_RTC_Init();
+  // MX_RTC_Init();
   // MX_TIM1_Init();
   // MX_TIM2_Init();
 
@@ -134,20 +136,11 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  sdate.Year = 17;
-  sdate.Month = 11;
-  sdate.Date = 18;
-  sdate.WeekDay = RTC_WEEKDAY_SUNDAY;
-
-  stime.Hours = 9;
-  stime.Minutes = 50;
-  stime.Seconds = 10;
-
-  RTC_Set_Calendar(&hrtc,&sdate,&stime);
-
+  
   while (1)
   {
-   RTC_Show_Calendar(&hrtc,&sdate,&stime);
+    xprintf("%x\n" ,TouchSense_Read_Status());
+    xStream_fflush();
   }
   /* USER CODE END 3 */
 

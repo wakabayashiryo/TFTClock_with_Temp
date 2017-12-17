@@ -48,6 +48,7 @@
 #include "xprintf_stream.h"
 #include "SHT31.h"
 #include "RTC_Operation.h"
+#include "TouchSense.h"
 
 /* USER CODE BEGIN Includes */
 /* USER CODE END Includes */
