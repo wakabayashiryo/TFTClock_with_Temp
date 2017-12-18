@@ -56,6 +56,7 @@ DMA_HandleTypeDef hdma_spi1_tx;
 
 TIM_HandleTypeDef htim1;
 TIM_HandleTypeDef htim2;
+TIM_OC_InitTypeDef sConfigOC;
 
 extern UART_HandleTypeDef huart2;
 DMA_HandleTypeDef hdma_usart2_tx;
@@ -76,9 +77,9 @@ static void MX_RTC_Init(void);
 static void MX_TIM1_Init(void);
 static void MX_TIM2_Init(void);
 
-/* USER CODE BEGIN PFP */
-/* Private function prototypes -----------------------------------------------*/
+void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
 
+/* USER CODE BEGIN PFP */
 /* USER CODE END PFP */
 
 /* USER CODE BEGIN 0 */
@@ -124,11 +125,17 @@ int main(void)
   SHT31_Init();
   // MX_RTC_Init();
   // MX_TIM1_Init();
-  // MX_TIM2_Init();
-
+  MX_TIM2_Init();
+  if (HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1) != HAL_OK)
+  {
+    /* PWM Generation Error */
+    Error_Handler();
+  }
+  uint32_t i = 0;
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
+/* Start channel 1 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
@@ -138,12 +145,11 @@ int main(void)
     ILI9325_DrawCircle(100,100,50,ILI9325_CYAN);
     SHT31_Read_Data();
   /* USER CODE END WHILE */
-
+    if(++i>1000)i=0;
+    __HAL_TIM_SET_COMPARE(&htim2,TIM_CHANNEL_1,i);
+    HAL_Delay(10);
   /* USER CODE BEGIN 3 */
-    temp = SHT31_Get_Temperature();
-    humid = SHT31_Get_Humidity();
-
-    xprintf("%d.%d %d.%d\n",(int16_t)temp,((int16_t)(temp*100)%100),(int16_t)humid,((int16_t)(humid*100)%100));
+    xprintf("%d\n",i);
     xStream_fflush();
   }
   /* USER CODE END 3 */
@@ -348,9 +354,9 @@ static void MX_TIM2_Init(void)
   TIM_MasterConfigTypeDef sMasterConfig;
 
   htim2.Instance = TIM2;
-  htim2.Init.Prescaler = 1;
+  htim2.Init.Prescaler = 84-1;
   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim2.Init.Period = 0;
+  htim2.Init.Period = 1000-1;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV4;
   if (HAL_TIM_Base_Init(&htim2) != HAL_OK)
   {
@@ -363,12 +369,28 @@ static void MX_TIM2_Init(void)
     _Error_Handler(__FILE__, __LINE__);
   }
 
+  if (HAL_TIM_PWM_Init(&htim2) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
   sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
   sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
   if (HAL_TIMEx_MasterConfigSynchronization(&htim2, &sMasterConfig) != HAL_OK)
   {
     _Error_Handler(__FILE__, __LINE__);
   }
+
+  sConfigOC.OCMode = TIM_OCMODE_PWM1;
+  sConfigOC.Pulse = 0;
+  sConfigOC.OCPolarity = TIM_OCPOLARITY_LOW;
+  sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+  if (HAL_TIM_PWM_ConfigChannel(&htim2, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+  HAL_TIM_MspPostInit(&htim2);
 
 }
 
