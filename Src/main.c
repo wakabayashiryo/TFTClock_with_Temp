@@ -124,8 +124,9 @@ int main(void)
   xStream_Setbuf(stream_buff,sizeof(stream_buff));
 
   MX_I2C1_Init();
-  TouchSense_Set_Configuration(1000,1000,100);
   SHT31_Init();
+
+  TouchSense_Set_Configuration(1000,1000,100);
 
   MX_RTC_Init();
   sdate.Year = 17;
@@ -146,12 +147,23 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
-
+  float temp,humid;
+  char stri[10];
+  
   /* Infinite loop */
   while (1)
   {
-    ILI9325_DrawCircle(100,100,50,ILI9325_CYAN);
     SHT31_Read_Data();
+    
+    temp = SHT31_Get_Temperature();
+    humid = SHT31_Get_Humidity();
+
+    xprintf("%d.%d %d.%d\n",(int16_t)temp,((int16_t)(temp*100)%100),(int16_t)humid,((int16_t)(humid*100)%100));
+    xStream_fflush();
+
+    // ILI9325_DrawString(100,100,stri,ILI9325_CYAN,1);
+
+    // RTC_Show_Calendar(&hrtc,&sdate,&stime);
   }
 
 }
