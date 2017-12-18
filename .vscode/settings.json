@@ -12,6 +12,7 @@
         "stm32f4xx_hal_sai.h": "c",
         "stdlib.h": "c",
         "stdint.h": "c",
-        "math.h": "c"
+        "math.h": "c",
+        "touchsensor.h": "c"
     }
 }

@@ -124,7 +124,9 @@ int main(void)
   xStream_Setbuf(stream_buff,sizeof(stream_buff));
 
   MX_I2C1_Init();
-  SHT31_Init();
+  TouchSense_Set_Configuration(1000,1000,100);
+
+  // SHT31_Init();
   // MX_RTC_Init();
   // MX_TIM1_Init();
   MX_TIM2_Init();
