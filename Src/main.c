@@ -130,12 +130,8 @@ int main(void)
   // MX_RTC_Init();
   // MX_TIM1_Init();
   MX_TIM2_Init();
-  if (HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1) != HAL_OK)
-  {
-    /* PWM Generation Error */
-    Error_Handler();
-  }
-  uint32_t i = 0;
+  Buzzer_Start();
+
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -161,9 +157,6 @@ int main(void)
     ILI9325_DrawCircle(100,100,50,ILI9325_CYAN);
     SHT31_Read_Data();
   /* USER CODE END WHILE */
-    if(++i>1000)i=0;
-    __HAL_TIM_SET_COMPARE(&htim2,TIM_CHANNEL_1,i);
-    HAL_Delay(10);
   /* USER CODE BEGIN 3 */
     xprintf("%d\n",i);
     xStream_fflush();
@@ -371,7 +364,7 @@ static void MX_TIM2_Init(void)
   htim2.Instance = TIM2;
   htim2.Init.Prescaler = 84-1;
   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim2.Init.Period = 1000-1;
+  htim2.Init.Period = PWM_PERIOD-1;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV4;
   if (HAL_TIM_Base_Init(&htim2) != HAL_OK)
   {
