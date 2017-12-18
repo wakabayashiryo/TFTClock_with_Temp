@@ -125,43 +125,34 @@ int main(void)
 
   MX_I2C1_Init();
   TouchSense_Set_Configuration(1000,1000,100);
+  SHT31_Init();
 
-  // SHT31_Init();
-  // MX_RTC_Init();
-  // MX_TIM1_Init();
+  MX_RTC_Init();
+  sdate.Year = 17;
+  sdate.Month = 12;
+  sdate.Date = 19;
+  sdate.WeekDay = RTC_WEEKDAY_THURSDAY;
+
+  stime.Hours = 6;
+  stime.Minutes = 30;
+  stime.Seconds = 00;
+
+  // RTC_Set_Calendar(&hrtc,&sdate,&stime);
+  
+  MX_TIM1_Init();
   MX_TIM2_Init();
   Buzzer_Start();
 
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
-/* Start channel 1 */
 
   /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
-
-  /*For testing sample date*/
-  sdate.Year = 17;
-  sdate.Month = 12;
-  sdate.Date = 15;
-  sdate.WeekDay = RTC_WEEKDAY_SUNDAY;
-
-  stime.Hours = 6;
-  stime.Minutes = 11;
-  stime.Seconds = 00;
-
-  // RTC_Set_Calendar(&hrtc,&sdate,&stime);
-
   while (1)
   {
     ILI9325_DrawCircle(100,100,50,ILI9325_CYAN);
     SHT31_Read_Data();
-  /* USER CODE END WHILE */
-  /* USER CODE BEGIN 3 */
-    xprintf("%d\n",i);
-    xStream_fflush();
   }
-  /* USER CODE END 3 */
 
 }
 
