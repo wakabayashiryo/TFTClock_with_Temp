@@ -126,9 +126,17 @@ typedef struct
 
 #define PWM_PERIOD (uint32_t)(1000000/SOUND_FREQ)
 
+<<<<<<< HEAD
 #define Buzzer_Start()  if(HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1) != HAL_OK){Error_Handler();}
 #define Buzzer_ON()     __HAL_TIM_SET_COMPARE(&htim2,TIM_CHANNEL_1,PWM_PERIOD>>1);
 #define Buzzer_OFF()    __HAL_TIM_SET_COMPARE(&htim2,TIM_CHANNEL_1,0);
+=======
+
+#define Buzzer_Start()          if(HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1) != HAL_OK){Error_Handler();}
+#define Buzzer_ON()             __HAL_TIM_SET_COMPARE(&htim2,TIM_CHANNEL_1,PWM_PERIOD>>1);
+#define Buzzer_OFF()            __HAL_TIM_SET_COMPARE(&htim2,TIM_CHANNEL_1,0);
+#define Buzzer_Set_Frequency(freq)  __HAL_TIM_SET_AUTORELOAD(&htim2, (uint32_t)(1000000/freq))
+>>>>>>> Buzzer_test
 
 /* USER CODE END Private defines */
 void _Error_Handler(char *, int);
