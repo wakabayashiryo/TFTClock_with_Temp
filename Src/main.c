@@ -156,7 +156,6 @@ int main(void)
   /* Infinite loop */
   while (1)
   {
-     Show_Clock_test(&stime,&sdate);
     // SHT31_Read_Data();
     
     // temp = SHT31_Get_Temperature();
@@ -170,16 +169,6 @@ int main(void)
     RTC_Show_Calendar(&hrtc,&sdate,&stime);
   }
 
-}
-
-void Show_Clock_test(RTC_TimeTypeDef *t,RTC_DateTypeDef *d)
-{
-  char ShowString[10];
-
-  ILI9325_FillRect(0,120,320,60,ILI9325_BLACK);
-  
-  sprintf(ShowString,"%2d:%02d",t->Minutes,t->Seconds);
-  ILI9325_DrawString(0,120,ShowString,ILI9325_BLUE,9);
 }
 
 /** System Clock Configuration
