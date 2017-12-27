@@ -43,7 +43,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <math.h>
-#include "DrawDiplay.h"
+#include "DrawDisplay.h"
 #include "xprintf.h"
 #include "ILI9325_Driver.h"
 #include "xprintf_stream.h"

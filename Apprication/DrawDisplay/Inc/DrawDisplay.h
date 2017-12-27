@@ -39,7 +39,7 @@
 #ifndef __DRAWDISPLAY_H
 #define __DRAWDISPLAY_H
   /* Includes ------------------------------------------------------------------*/
-
+#include "stm32f4xx_hal_rtc.h"
 #include "main.h"
 
 #define PROCESSTIME_CLOCK 100   //ms

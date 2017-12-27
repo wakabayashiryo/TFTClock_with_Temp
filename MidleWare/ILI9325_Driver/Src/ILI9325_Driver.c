@@ -371,8 +371,8 @@ void ILI9325_DrawFastVLine(int16_t x, int16_t y, int16_t length,uint16_t color)
   setAddrWindow(0, 0, _width - 1, _height - 1);
 }
 
-void ILI9325_FillRect(int16_t x1, int16_t y1, int16_t w, int16_t h, 
-    uint16_t fillcolor) {
+void ILI9325_FillRect(int16_t x1, int16_t y1, int16_t w, int16_t h,uint16_t fillcolor)
+ {
   int16_t  x2, y2;
 
   // Initial off-screen clipping
@@ -616,7 +616,7 @@ void ILI9325_DrawBitmap(int16_t x, int16_t y, const uint16_t *image, int16_t w, 
 //        bgColor   16-bit color of the background
 //        size      number of pixels per character pixel (e.g. size==2 prints each pixel of font as 2x2 square)
 // Output: none
-void ILI9325_DrawChar(uint8_t  x, uint8_t  y, int8_t  c, uint16_t  color, uint8_t  size)
+void ILI9325_DrawChar(int16_t  x, int16_t  y, int8_t  c, uint16_t  color, uint8_t  size)
 {
     uint8_t  i, j;
 
@@ -660,7 +660,7 @@ uint16_t ILI9325_Color565(uint8_t r, uint8_t g, uint8_t b)
 //        textColor 16-bit color of the characters
 // bgColor is Black and size is 1
 // Output: number of characters printed
-void ILI9325_DrawString(uint8_t  x, uint8_t  y, int8_t  *c, uint16_t  color, uint8_t  size)
+void ILI9325_DrawString(int16_t  x, int16_t  y, int8_t  *c, uint16_t  color, uint8_t  size)
 {
     uint16_t px = x,py = y;
     

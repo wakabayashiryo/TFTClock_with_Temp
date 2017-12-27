@@ -254,7 +254,7 @@ void ILI9325_DrawBitmap(int16_t x, int16_t y, const uint16_t *image, int16_t w, 
 //        bgColor   16-bit color of the background
 //        size      number of pixels per character pixel (e.g. size==2 prints each pixel of font as 2x2 square)
 // Output: none
-void ILI9325_DrawChar(uint8_t  x, uint8_t  y, int8_t  c, uint16_t  color, uint8_t  size);
+void ILI9325_DrawChar(int16_t  x, int16_t  y, int8_t  c, uint16_t  color, uint8_t  size);
 
 //------------ILI9325_DrawString------------
 // String draw function.  
@@ -266,7 +266,7 @@ void ILI9325_DrawChar(uint8_t  x, uint8_t  y, int8_t  c, uint16_t  color, uint8_
 //        textColor 16-bit color of the characters
 // bgColor is Black and size is 1
 // Output: number of characters printed
-void ILI9325_DrawString(uint8_t  x, uint8_t  y, int8_t  *c, uint16_t  color, uint8_t  size);
+void ILI9325_DrawString(int16_t  x, int16_t  y, int8_t  *c, uint16_t  color, uint8_t  size);
 
 //-----------------------fillmessage-----------------------
 // Output a 32-bit number in unsigned decimal format
