@@ -117,7 +117,8 @@ int main(void)
   
   MX_DMA_Init();
   
-  // MX_SPI1_Init();
+  // MX_SPI1_Init();void Show_Clock_test(RTC_TimeTypeDef *time,RTC_DateTypeDef *date)
+
   
   MX_USART2_UART_Init();
   uint8_t stream_buff[1000];
@@ -150,22 +151,35 @@ int main(void)
   float temp,humid;
   char stri[10];
   
+  ILI9325_SetRotation(3);
+
   /* Infinite loop */
   while (1)
   {
-    SHT31_Read_Data();
+     Show_Clock_test(&stime,&sdate);
+    // SHT31_Read_Data();
     
-    temp = SHT31_Get_Temperature();
-    humid = SHT31_Get_Humidity();
+    // temp = SHT31_Get_Temperature();
+    // humid = SHT31_Get_Humidity();
 
-    xprintf("%d.%d %d.%d\n",(int16_t)temp,((int16_t)(temp*100)%100),(int16_t)humid,((int16_t)(humid*100)%100));
-    xStream_fflush();
+    // xprintf("%d.%d %d.%d\n",(int16_t)temp,((int16_t)(temp*100)%100),(int16_t)humid,((int16_t)(humid*100)%100));
+    // xStream_fflush();
 
     // ILI9325_DrawString(100,100,stri,ILI9325_CYAN,1);
 
-    // RTC_Show_Calendar(&hrtc,&sdate,&stime);
+    RTC_Show_Calendar(&hrtc,&sdate,&stime);
   }
 
+}
+
+void Show_Clock_test(RTC_TimeTypeDef *t,RTC_DateTypeDef *d)
+{
+  char ShowString[10];
+
+  ILI9325_FillRect(0,120,320,60,ILI9325_BLACK);
+  
+  sprintf(ShowString,"%2d:%02d",t->Minutes,t->Seconds);
+  ILI9325_DrawString(0,120,ShowString,ILI9325_BLUE,9);
 }
 
 /** System Clock Configuration

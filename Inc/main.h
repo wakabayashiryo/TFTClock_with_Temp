@@ -134,6 +134,7 @@ typedef struct
 
 /* USER CODE END Private defines */
 void _Error_Handler(char *, int);
+void Show_Clock_test(RTC_TimeTypeDef *time,RTC_DateTypeDef *date);
 
 #define Error_Handler() _Error_Handler(__FILE__, __LINE__)
 
