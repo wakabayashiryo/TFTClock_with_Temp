@@ -46,7 +46,7 @@
 #define PROCESSTIME_ENVIR 30000 //ms
 
 /* USER CODE BEGIN Includes */
-void Dispaly_DigitalClock(RTC_TimeTypeDef *time,RTC_DateTypeDef *date);
+void Dispaly_DigitalClock(void);
 /* USER CODE END Includes */
 
 /* Private define ------------------------------------------------------------*/

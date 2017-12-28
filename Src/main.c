@@ -48,9 +48,9 @@ extern I2C_HandleTypeDef hi2c1;
 DMA_HandleTypeDef hdma_i2c1_rx;
 DMA_HandleTypeDef hdma_i2c1_tx;
 
-RTC_HandleTypeDef hrtc;
-RTC_TimeTypeDef stime;
-RTC_DateTypeDef sdate;
+extern RTC_HandleTypeDef hrtc;
+extern RTC_TimeTypeDef stime;
+extern RTC_DateTypeDef sdate;
 
 SPI_HandleTypeDef hspi1;
 DMA_HandleTypeDef hdma_spi1_rx;
@@ -117,8 +117,7 @@ int main(void)
   
   MX_DMA_Init();
   
-  // MX_SPI1_Init();void Show_Clock_test(RTC_TimeTypeDef *time,RTC_DateTypeDef *date)
-
+  // MX_SPI1_Init();
   
   MX_USART2_UART_Init();
   uint8_t stream_buff[1000];
