@@ -39,14 +39,13 @@
 #ifndef __DRAWDISPLAY_H
 #define __DRAWDISPLAY_H
   /* Includes ------------------------------------------------------------------*/
-#include "stm32f4xx_hal_rtc.h"
 #include "main.h"
 
-#define PROCESSTIME_CLOCK 100   //ms
 #define PROCESSTIME_ENVIR 30000 //ms
 
 /* USER CODE BEGIN Includes */
-void Dispaly_DigitalClock(void);
+void Display_Set_BackColor(uint16_t color);
+void Display_DigitalClock(void);
 /* USER CODE END Includes */
 
 /* Private define ------------------------------------------------------------*/

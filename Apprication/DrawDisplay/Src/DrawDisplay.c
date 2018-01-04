@@ -1,8 +1,11 @@
 #include "DrawDisplay.h"
+#include "stm32f4xx_hal_rtc.h"
 
 static uint16_t BackColor = ILI9325_BLACK;
-static uint16_t ProcessCount_Clock = 0;
-static uint16_t ProcessCount_Envir  = 0;
+static uint16_t ProcessCount_Envir = PROCESSTIME_ENVIR-1;
+
+static uint8_t PreviousMinutes;
+static uint8_t PreviousSeconds;
 
 RTC_HandleTypeDef hrtc;
 RTC_TimeTypeDef stime;
@@ -12,7 +15,7 @@ static void Clear_StringSpace(uint16_t x,uint16_t y,int8_t *str,uint16_t size)
 {
   uint16_t len = strlen((char*)str);
 
-  ILI9325_FillRect(x,y,size*len*6,size*len*8,BackColor);
+  ILI9325_FillRect(x,y,size*len*6,size*7,BackColor);
 }
 
 void Display_Set_BackColor(uint16_t color)
@@ -20,35 +23,51 @@ void Display_Set_BackColor(uint16_t color)
   BackColor = color;
 }
 
-void Dispaly_DigitalClock(void)
+void Display_DigitalClock(void)
 {
+  float temp,humid;
+
   char ClockString[6];
-  char EnvirString[2][6];
+  char TempString[30];
+  char HumidString[30];
 
-  if((++ProcessCount_Clock)>PROCESSTIME_CLOCK)
+  RTC_Get_Calendar(&hrtc,&sdate,&stime);
+
+  if(stime.Minutes!=PreviousMinutes)
   {
-    ProcessCount_Clock = 0;
-
-    RTC_Get_Calendar(&hrtc,&sdate,&stime);
+    PreviousMinutes = stime.Minutes;
 
     sprintf(ClockString,"%2d:%02d",stime.Hours,stime.Minutes);
     Clear_StringSpace(0,120,(int8_t *)ClockString,9);
-    ILI9325_DrawString(0,120,(int8_t *)ClockString,ILI9325_BLUE,9);
+    ILI9325_DrawString(0,120,(int8_t *)ClockString,ILI9325_YELLOW,9);
   }
+  if(stime.Seconds!=PreviousSeconds)
+  {
+    PreviousSeconds = stime.Seconds;
+    
+    sprintf(ClockString,"%02d",stime.Seconds);
+    Clear_StringSpace(260,150,(int8_t *)ClockString,5);
+    ILI9325_DrawString(260,150,(int8_t *)ClockString,ILI9325_YELLOW,5);
+  }
+
 
   if((++ProcessCount_Envir)>PROCESSTIME_ENVIR)
   {
     ProcessCount_Envir = 0;
 
-    SHT31_Read_Data();
+    // SHT31_Read_Data();
 
-    sprintf(EnvirString[0],"%2.1f",SHT31_Get_Temperature());
-    Clear_StringSpace(0,0,(int8_t *)EnvirString[0],5);
-    ILI9325_DrawString(0,0,(int8_t *)EnvirString[0],ILI9325_BLUE,5);
+    temp = SHT31_Get_Temperature();
+    humid = SHT31_Get_Humidity();
+  
+    sprintf(TempString,"%hd.%1dC",(int16_t)temp,((uint16_t)(temp*100)%10));
+    Clear_StringSpace(0,40,(int8_t *)TempString,4);
+    ILI9325_DrawString(0,40,(int8_t *)TempString,ILI9325_BLUE,4);
 
-    sprintf(EnvirString[1],"%2f",SHT31_Get_Humidity());
-    Clear_StringSpace(160,0,(int8_t *)EnvirString[1],5);
-    ILI9325_DrawString(160,0,(int8_t *)EnvirString[1],ILI9325_BLUE,5);
+    sprintf(HumidString,"%hd.%1d%%",(int16_t)humid,((uint16_t)(humid*100)%10));
+    Clear_StringSpace(200,40,(int8_t *)HumidString,4);
+    ILI9325_DrawString(200,40,(int8_t *)HumidString,ILI9325_BLUE,4);
     
   }
+
 }

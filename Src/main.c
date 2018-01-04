@@ -113,11 +113,13 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  ILI9325_Init();
   
   MX_DMA_Init();
-  
-  // MX_SPI1_Init();
+    
+  ILI9325_Init();
+  ILI9325_SetRotation(3);
+
+// MX_SPI1_Init();
   
   MX_USART2_UART_Init();
   uint8_t stream_buff[1000];
@@ -125,22 +127,27 @@ int main(void)
 
   MX_I2C1_Init();
   SHT31_Init();
-
   TouchSense_Set_Configuration(1000,1000,100);
 
   MX_RTC_Init();
-  sdate.Year = 17;
-  sdate.Month = 12;
-  sdate.Date = 19;
+  sdate.Year = 18;
+  sdate.Month = 1;
+  sdate.Date = 5;
   sdate.WeekDay = RTC_WEEKDAY_THURSDAY;
 
-  stime.Hours = 6;
-  stime.Minutes = 30;
+  stime.Hours = 0;
+  stime.Minutes = 46;
   stime.Seconds = 00;
 
   // RTC_Set_Calendar(&hrtc,&sdate,&stime);
   
   MX_TIM1_Init();
+  if(HAL_TIM_Base_Start_IT(&htim1) != HAL_OK)
+  {
+    /* Starting Error */
+    Error_Handler();
+  }
+
   MX_TIM2_Init();
   Buzzer_Start();
 
@@ -148,24 +155,23 @@ int main(void)
 
   /* USER CODE END 2 */
   float temp,humid;
-  char stri[10];
+  char stri[50];
   
-  ILI9325_SetRotation(3);
 
   /* Infinite loop */
   while (1)
   {
-    // SHT31_Read_Data();
-    
+
+    SHT31_Read_Data();
     // temp = SHT31_Get_Temperature();
     // humid = SHT31_Get_Humidity();
-
-    // xprintf("%d.%d %d.%d\n",(int16_t)temp,((int16_t)(temp*100)%100),(int16_t)humid,((int16_t)(humid*100)%100));
-    // xStream_fflush();
-
-    // ILI9325_DrawString(100,100,stri,ILI9325_CYAN,1);
-
+    
+    // xprintf("%d.%1d %d.%1d\n",(int16_t)temp,((int16_t)(temp*100)%10),(int16_t)humid,((int16_t)(humid*100)%10));
+   
+    RTC_Get_Calendar(&hrtc,&sdate,&stime);
     RTC_Show_Calendar(&hrtc,&sdate,&stime);
+
+     xStream_fflush();
   }
 
 }
@@ -334,10 +340,10 @@ static void MX_TIM1_Init(void)
   TIM_MasterConfigTypeDef sMasterConfig;
 
   htim1.Instance = TIM1;
-  htim1.Init.Prescaler = 1;
+  htim1.Init.Prescaler = 84;
   htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim1.Init.Period = 0;
-  htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV4;
+  htim1.Init.Period = 1000;
+  htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim1.Init.RepetitionCounter = 0;
   if (HAL_TIM_Base_Init(&htim1) != HAL_OK)
   {

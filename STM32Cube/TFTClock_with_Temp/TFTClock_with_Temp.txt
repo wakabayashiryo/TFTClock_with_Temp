@@ -1,6 +1,6 @@
 Configuration	TFTClock_with_Temp
 STM32CubeMX 	4.23.0
-Date	11/15/2017
+Date	01/04/2018
 MCU	STM32F401RETx
 
 
@@ -20,6 +20,7 @@ SPI1	Full-Duplex Master	SPI1_SCK	PA5
 SYS	SysTick	SYS_VS_Systick	VP_SYS_VS_Systick
 TIM1	Internal Clock	TIM1_VS_ClockSourceINT	VP_TIM1_VS_ClockSourceINT
 TIM2	Internal Clock	TIM2_VS_ClockSourceINT	VP_TIM2_VS_ClockSourceINT
+TIM2	PWM Generation CH1	TIM2_CH1	PA15
 USART2	Asynchronous	USART2_RX	PA3
 USART2	Asynchronous	USART2_TX	PA2
 
@@ -48,6 +49,7 @@ Pin Nb	PINs	FUNCTIONs	LABELs
 43	PA10	GPIO_Output	LCD_D2
 46	PA13*	SYS_JTMS-SWDIO	TMS
 49	PA14*	SYS_JTCK-SWCLK	TCK
+50	PA15	TIM2_CH1	
 55	PB3	GPIO_Output	LCD_D3
 56	PB4	GPIO_Output	LCD_D5
 57	PB5	GPIO_Output	LCD_D4
@@ -63,11 +65,11 @@ Project Settings :
 Project Name : TFTClock_with_Temp
 Project Folder : /home/evaota/TFTClock_with_Temp/STM32Cube/TFTClock_with_Temp
 Toolchain / IDE : Makefile
-Firmware Package Name and Version : STM32Cube FW_F4 V1.16.0
+Firmware Package Name and Version : STM32Cube FW_F4 V1.17.0
 
 
 Code Generation Settings : 
-STM32Cube Firmware Library Package : Copy all used libraries into the project folder
+STM32Cube Firmware Library Package : Add necessary library files as reference in the toolchain project configuration file
 Generate peripheral initialization as a pair of '.c/.h' files per peripheral : No
 Backup previously generated files when re-generating : No
 Delete previously generated files when not re-generated : Yes

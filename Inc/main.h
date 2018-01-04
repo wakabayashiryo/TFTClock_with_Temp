@@ -42,12 +42,13 @@
 #include "stm32f4xx_hal.h"
 #include <stdint.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <math.h>
+#include "SHT31.h"
 #include "DrawDisplay.h"
 #include "xprintf.h"
 #include "ILI9325_Driver.h"
 #include "xprintf_stream.h"
-#include "SHT31.h"
 #include "RTC_Operation.h"
 #include "TouchSense.h"
 

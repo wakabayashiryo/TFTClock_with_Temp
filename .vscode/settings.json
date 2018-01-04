@@ -13,6 +13,10 @@
         "stdlib.h": "c",
         "stdint.h": "c",
         "math.h": "c",
-        "touchsensor.h": "c"
+        "touchsensor.h": "c",
+        "drawdisplay.h": "c",
+        "stm32f4xx.h": "c",
+        "stm32f4xx_it.h": "c",
+        "sht31.h": "c"
     }
 }
