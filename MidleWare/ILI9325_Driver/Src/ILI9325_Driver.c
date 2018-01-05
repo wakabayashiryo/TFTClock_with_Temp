@@ -646,7 +646,7 @@ void ILI9325_DrawChar(int16_t  x, int16_t  y, int8_t  c, uint16_t  color, uint8_
 // Output: 16-bit color
 uint16_t ILI9325_Color565(uint8_t r, uint8_t g, uint8_t b) 
 {
-  return ((b & 0xF8) << 8) | ((g & 0xFC) << 3) | (r >> 3);
+  return ((r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3);
 }
 
 
