@@ -117,7 +117,9 @@ int main(void)
   MX_DMA_Init();
     
   ILI9325_Init();
+  ILI9325_FillScreen(ILI9325_Color565(255,255,255));
   ILI9325_SetRotation(3);
+  Display_Set_BackColor(ILI9325_Color565(255,255,255));
 
 // MX_SPI1_Init();
   
@@ -128,6 +130,8 @@ int main(void)
   MX_I2C1_Init();
   SHT31_Init();
   TouchSense_Set_Configuration(1000,1000,100);
+
+  SHT31_Read_Data();
 
   MX_RTC_Init();
   sdate.Year = 18;
@@ -166,7 +170,7 @@ int main(void)
     // temp = SHT31_Get_Temperature();
     // humid = SHT31_Get_Humidity();
     
-    // xprintf("%d.%1d %d.%1d\n",(int16_t)temp,((int16_t)(temp*100)%10),(int16_t)humid,((int16_t)(humid*100)%10));
+    // xprintf("%d.%1d %d.%1d\n",(int16_t)temp,((int16_t)(temp*10)%10),(int16_t)humid,((int16_t)(humid*10)%10));
    
     RTC_Get_Calendar(&hrtc,&sdate,&stime);
     RTC_Show_Calendar(&hrtc,&sdate,&stime);
