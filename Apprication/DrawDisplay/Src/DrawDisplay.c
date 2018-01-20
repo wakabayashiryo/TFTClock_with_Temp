@@ -1,4 +1,5 @@
 #include "DrawDisplay.h"
+#include "stdarg.h"
 #include "stm32f4xx_hal_rtc.h"
 
 static uint16_t BackColor = ILI9325_BLACK;
@@ -8,15 +9,88 @@ static uint8_t PreviousMinutes;
 static uint8_t PreviousSeconds;
 static uint8_t PreviousDate;
 
+static const float AnalogXY[] = 
+{
+ 1.000, 0.000,
+ 0.995,  0.105,
+ 0.978,  0.208,
+ 0.951,  0.309,
+ 0.914,  0.407,
+ 0.866,  0.500,
+ 0.809,  0.588,
+ 0.743,  0.669,
+ 0.669,  0.743,
+ 0.588,  0.809,
+ 0.500,  0.866,
+ 0.407,  0.914,
+ 0.309,  0.951,
+ 0.208,  0.978,
+ 0.105,  0.995,
+ 0.000,  1.000,
+-0.105,  0.995,
+-0.208,  0.978,
+-0.309,  0.951,
+-0.407,  0.914,
+-0.500,  0.866,
+-0.588,  0.809,
+-0.669,  0.743,
+-0.743,  0.669,
+-0.809,  0.588,
+-0.866,  0.500,
+-0.914,  0.407,
+-0.951,  0.309,
+-0.978,  0.208,
+-0.995,  0.105,
+-1.000,  0.000,
+-0.995, -0.105,
+-0.978, -0.208,
+-0.951, -0.309,
+-0.914, -0.407,
+-0.866, -0.500,
+-0.809, -0.588,
+-0.743, -0.669,
+-0.669, -0.743,
+-0.588, -0.809,
+-0.500, -0.866,
+-0.407, -0.914,
+-0.309, -0.951,
+-0.208, -0.978,
+-0.105, -0.995,
+-0.000, -1.000,
+ 0.105, -0.995,
+ 0.208, -0.978,
+ 0.309, -0.951,
+ 0.407, -0.914,
+ 0.500, -0.866,
+ 0.588, -0.809,
+ 0.669, -0.743,
+ 0.743, -0.669,
+ 0.809, -0.588,
+ 0.866, -0.500,
+ 0.914, -0.407,
+ 0.951, -0.309,
+ 0.978, -0.208,
+ 0.995, -0.105,
+};
+
 RTC_HandleTypeDef hrtc;
 RTC_TimeTypeDef stime;
 RTC_DateTypeDef sdate;
 
-static void Clear_StringSpace(uint16_t x,uint16_t y,int8_t *str,uint16_t size)
+void Display_DrawString(uint16_t x,uint16_t y,uint16_t color,uint16_t size,const char *args, ...)
 {
-  uint16_t len = strlen((char*)str);
+	va_list ap;
+	char str[30];
+	
+	va_start(ap,args);
+	vsnprintf(str,30,args,ap);
 
+  uint16_t len = strlen((char*)str);  
+  
   ILI9325_FillRect(x,y,size*len*6,size*7,BackColor);
+  ILI9325_DrawString(x,y,(int8_t *)str,color,size);
+  
+	va_end(ap);
 }
 
 void Display_Set_BackColor(uint16_t color)
@@ -28,37 +102,26 @@ void Display_DigitalClock(void)
 {
   float temp,humid;
 
-  char Datestring[25];
-  char ClockString[6];
-  char TempString[10];
-  char HumidString[10];
-
   RTC_Get_Calendar(&hrtc,&sdate,&stime);
 
   if(sdate.Date!=PreviousDate)
   {
     PreviousDate = sdate.Date;
 
-    sprintf(Datestring,"%4d-%02d-%02d[%s] ",2000 + sdate.Year,sdate.Month,sdate.Date,RTC_Get_WeekDay_Char(&sdate));
-    Clear_StringSpace(CLCOKDATE_X,CLCOKDATE_Y,(int8_t *)Datestring,2);
-    ILI9325_DrawString(CLCOKDATE_X,CLCOKDATE_Y,(int8_t *)Datestring,ILI9325_Color565(0,188,212),2);
+    Display_DrawString(CLCOKDATE_X,CLCOKDATE_Y,ILI9325_Color565(0,188,212),2,"%4d-%02d-%02d[%s] ",2000 + sdate.Year,sdate.Month,sdate.Date,RTC_Get_WeekDay_Char(&sdate));
   }
 
   if(stime.Minutes!=PreviousMinutes)
   {
     PreviousMinutes = stime.Minutes;
 
-    sprintf(ClockString,"%2d:%02d",stime.Hours,stime.Minutes);
-    Clear_StringSpace(CLCOKMAIN_X,CLCOKMAIN_Y,(int8_t *)ClockString,9);
-    ILI9325_DrawString(CLCOKMAIN_X,CLCOKMAIN_Y,(int8_t *)ClockString,ILI9325_Color565(96,125,139),9);
+    Display_DrawString(CLCOKMAIN_X,CLCOKMAIN_Y,ILI9325_Color565(96,125,139),9,"%2d:%02d",stime.Hours,stime.Minutes);
   }
   if(stime.Seconds!=PreviousSeconds)
   {
     PreviousSeconds = stime.Seconds;
     
-    sprintf(ClockString,"%02d",stime.Seconds);
-    Clear_StringSpace(CLOCKSECOND_X,CLOCKSECOND_Y,(int8_t *)ClockString,5);
-    ILI9325_DrawString(CLOCKSECOND_X,CLOCKSECOND_Y,(int8_t *)ClockString,ILI9325_Color565(96,125,139),4);
+    Display_DrawString(CLOCKSECOND_X,CLOCKSECOND_Y,ILI9325_Color565(96,125,139),5,"%02d",stime.Seconds);
   }
 
 
@@ -71,15 +134,53 @@ void Display_DigitalClock(void)
     temp = SHT31_Get_Temperature();
     humid = SHT31_Get_Humidity();
   
-    sprintf(TempString,"%hd.%1d",(int16_t)temp,((uint16_t)(temp*10)%10));
-    Clear_StringSpvoid Display_DigitalClock(void)
-{ace(TEMP_X,TEMP_Y,(int8_t *)TempString,3);
-    ILI9325_DrawString(TEMP_X,TEMP_Y,(int8_t *)TempString,ILI9325_BLUE,3);
+    Display_DrawString(TEMP_X,TEMP_Y,ILI9325_BLUE,3,"%hd.%1d",(int16_t)temp,((uint16_t)(temp*10)%10));
 
-    sprintf(HumidString,"%hd.%1d",(int16_t)humid,((uint16_t)(humid*10)%10));
-    Clear_StringSpace(HUMI_X,HUMI_Y,(int8_t *)HumidString,3);
-    ILI9325_DrawString(HUMI_X,HUMI_Y,(int8_t *)HumidString,ILI9325_BLUE,3);
+    Display_DrawString(HUMI_X,HUMI_Y,ILI9325_BLUE,3,"%hd.%1d",(int16_t)humid,((uint16_t)(humid*10)%10));
+  }
+
+}
+
+void Calcu_HourHand(uint16_t x,uint16_t y,uint16_t r,uint8_t color)
+{
+  uint16_t x2,y2;
+
+  x2 = x+(int16_t)((float)r*AnalogXY[stime.Seconds*2  ]);
+  y2 = y+(int16_t)((float)r*AnalogXY[stime.Seconds*2+1]);  
+
+  ILI9325_DrawLine(x,y,x2,y2,color);
+}
+
+void Display_AnalogClock(void)
+{
+  float temp,humid;
+
+  RTC_Get_Calendar(&hrtc,&sdate,&stime);
+
+  if(sdate.Date!=PreviousDate)
+  {
+    PreviousDate = sdate.Date;
+
+    Display_DrawString(CLCOKDATE_X,CLCOKDATE_Y,ILI9325_Color565(0,188,212),2,"%4d-%02d-%02d[%s] ",2000 + sdate.Year,sdate.Month,sdate.Date,RTC_Get_WeekDay_Char(&sdate));
+  }
+
+  Calcu_HourHand(160,120,120,ILI9325_BLACK);
+
+  ILI9325_DrawCircle(160,120,120,ILI9325_BLACK);
+  ILI9325_DrawCircle(160,120,119,ILI9325_BLACK);
+
+  if((++ProcessCount_Envir)>PROCESSTIME_ENVIR)
+  {
+    ProcessCount_Envir = 0;
+
+    // SHT31_Read_Data();
+
+    temp = SHT31_Get_Temperature();
+    humid = SHT31_Get_Humidity();
     
+    Display_DrawString(TEMP_X,TEMP_Y,ILI9325_BLUE,3,"%hd.%1d",(int16_t)temp,((uint16_t)(temp*10)%10));
+
+    Display_DrawString(HUMI_X,HUMI_Y,ILI9325_BLUE,3,"%hd.%1d",(int16_t)humid,((uint16_t)(humid*10)%10));
   }
 
 }

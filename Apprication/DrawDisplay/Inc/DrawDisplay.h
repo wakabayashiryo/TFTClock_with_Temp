@@ -59,6 +59,7 @@
 /* USER CODE BEGIN Includes */
 void Display_Set_BackColor(uint16_t color);
 void Display_DigitalClock(void);
+void Display_AnalogClock(void);
 /* USER CODE END Includes */
 
 /* Private define ------------------------------------------------------------*/
