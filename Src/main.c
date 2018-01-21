@@ -115,6 +115,8 @@ int main(void)
   MX_GPIO_Init();
   
   MX_DMA_Init();
+
+  Display_Set_BackLight();
     
   ILI9325_Init();
   ILI9325_FillScreen(ILI9325_Color565(255,255,255));

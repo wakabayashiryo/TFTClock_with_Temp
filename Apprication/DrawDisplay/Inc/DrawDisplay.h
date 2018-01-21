@@ -57,6 +57,9 @@
 #define HUMI_Y           200
 
 /* USER CODE BEGIN Includes */
+
+#define Display_Set_BackLight()   HAL_GPIO_WritePin(BackLight_GPIO_Port,BackLight_Pin,GPIO_PIN_RESET)
+#define Display_Reset_BackLight() HAL_GPIO_WritePin(BackLight_GPIO_Port,BackLight_Pin,GPIO_PIN_SET)
 void Display_Set_BackColor(uint16_t color);
 void Display_DigitalClock(void);
 void Display_AnalogClock(void);
