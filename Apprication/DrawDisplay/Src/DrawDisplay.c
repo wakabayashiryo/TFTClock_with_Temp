@@ -164,10 +164,10 @@ void Display_AnalogClock(void)
     Display_DrawString(CLCOKDATE_X,CLCOKDATE_Y,ILI9325_Color565(0,188,212),2,"%4d-%02d-%02d[%s] ",2000 + sdate.Year,sdate.Month,sdate.Date,RTC_Get_WeekDay_Char(&sdate));
   }
 
-  Calcu_HourHand(160,120,120,ILI9325_BLACK);
+  // Calcu_HourHand(160,120,120,ILI9325_BLACK);
 
-  ILI9325_DrawCircle(160,120,120,ILI9325_BLACK);
-  ILI9325_DrawCircle(160,120,119,ILI9325_BLACK);
+  // ILI9325_DrawCircle(160,120,120,ILI9325_BLACK);
+  // ILI9325_DrawCircle(160,120,119,ILI9325_BLACK);
 
   if((++ProcessCount_Envir)>PROCESSTIME_ENVIR)
   {
@@ -183,4 +183,43 @@ void Display_AnalogClock(void)
     Display_DrawString(HUMI_X,HUMI_Y,ILI9325_BLUE,3,"%hd.%1d",(int16_t)humid,((uint16_t)(humid*10)%10));
   }
 
+}
+
+static uint8_t BackLight_Blight = 0; 
+
+void Display_Set_Blightless(uint8_t Blight)
+{
+  if(Blight>7)Blight = 7;
+  BackLight_Blight = Blight;
+}
+
+void Display_Process_BackLight(void)
+{
+  static uint8_t count = 0;
+  
+  switch(count)
+  {
+    case 1:
+      if(BackLight_Blight&0x01)
+        Display_Set_BackLight();
+      else
+        Display_Reset_BackLight();
+    break;
+    case 2:
+      if(BackLight_Blight&0x02)
+        Display_Set_BackLight();
+      else
+        Display_Reset_BackLight();
+    break;
+    case 4:
+      if(BackLight_Blight&0x04)
+        Display_Set_BackLight();
+      else
+        Display_Reset_BackLight();
+    break;
+    default:
+    break;
+  }
+     
+  if(++count>7)count = 0;
 }

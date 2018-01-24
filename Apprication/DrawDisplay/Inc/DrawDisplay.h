@@ -58,11 +58,15 @@
 
 /* USER CODE BEGIN Includes */
 
-#define Display_Set_BackLight()   HAL_GPIO_WritePin(BackLight_GPIO_Port,BackLight_Pin,GPIO_PIN_RESET)
-#define Display_Reset_BackLight() HAL_GPIO_WritePin(BackLight_GPIO_Port,BackLight_Pin,GPIO_PIN_SET)
+#define Display_Set_BackLight()   GPIOC->ODR &= ~(1<<0)
+#define Display_Reset_BackLight() GPIOC->ODR |=  (1<<0)
+
 void Display_Set_BackColor(uint16_t color);
 void Display_DigitalClock(void);
 void Display_AnalogClock(void);
+
+void Display_Set_Blightless(uint8_t Blight);
+void Display_Process_BackLight(void);
 /* USER CODE END Includes */
 
 /* Private define ------------------------------------------------------------*/

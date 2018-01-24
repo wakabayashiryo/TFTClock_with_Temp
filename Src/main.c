@@ -52,10 +52,6 @@ extern RTC_HandleTypeDef hrtc;
 extern RTC_TimeTypeDef stime;
 extern RTC_DateTypeDef sdate;
 
-SPI_HandleTypeDef hspi1;
-DMA_HandleTypeDef hdma_spi1_rx;
-DMA_HandleTypeDef hdma_spi1_tx;
-
 TIM_HandleTypeDef htim1;
 TIM_HandleTypeDef htim2;
 TIM_OC_InitTypeDef sConfigOC;
@@ -72,7 +68,6 @@ DMA_HandleTypeDef hdma_usart2_tx;
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_DMA_Init(void);
-static void MX_SPI1_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_RTC_Init(void);
@@ -116,21 +111,20 @@ int main(void)
   
   MX_DMA_Init();
 
-  Display_Set_BackLight();
-    
   ILI9325_Init();
   ILI9325_FillScreen(ILI9325_Color565(255,255,255));
   ILI9325_SetRotation(3);
   Display_Set_BackColor(ILI9325_Color565(255,255,255));
 
-// MX_SPI1_Init();
-  
+  Display_Set_Blightless(3);
+
   MX_USART2_UART_Init();
   uint8_t stream_buff[1000];
   xStream_Setbuf(stream_buff,sizeof(stream_buff));
 
   MX_I2C1_Init();
   SHT31_Init();
+
   TouchSense_Set_Configuration(1000,1000,100);
 
   SHT31_Read_Data();
@@ -138,11 +132,11 @@ int main(void)
   MX_RTC_Init();
   sdate.Year = 18;
   sdate.Month = 1;
-  sdate.Date = 5;
-  sdate.WeekDay = RTC_WEEKDAY_THURSDAY;
+  sdate.Date = 24;
+  sdate.WeekDay = RTC_WEEKDAY_WEDNESDAY;
 
-  stime.Hours = 0;
-  stime.Minutes = 46;
+  stime.Hours = 22;
+  stime.Minutes = 57;
   stime.Seconds = 00;
 
   // RTC_Set_Calendar(&hrtc,&sdate,&stime);
@@ -161,7 +155,6 @@ int main(void)
 
   /* USER CODE END 2 */
   float temp,humid;
-  char stri[50];
   
 
   /* Infinite loop */
@@ -310,30 +303,6 @@ static void MX_RTC_Init(void)
   }
 
     HAL_RTCEx_BKUPWrite(&hrtc,RTC_BKP_DR0,0x32F2);
-  }
-
-}
-
-/* SPI1 init function */
-static void MX_SPI1_Init(void)
-{
-
-  /* SPI1 parameter configuration*/
-  hspi1.Instance = SPI1;
-  hspi1.Init.Mode = SPI_MODE_MASTER;
-  hspi1.Init.Direction = SPI_DIRECTION_2LINES;
-  hspi1.Init.DataSize = SPI_DATASIZE_8BIT;
-  hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
-  hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
-  hspi1.Init.NSS = SPI_NSS_SOFT;
-  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
-  hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
-  hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
-  hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
-  hspi1.Init.CRCPolynomial = 10;
-  if (HAL_SPI_Init(&hspi1) != HAL_OK)
-  {
-    _Error_Handler(__FILE__, __LINE__);
   }
 
 }
