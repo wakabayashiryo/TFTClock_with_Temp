@@ -29,6 +29,9 @@ int8_t SHT31_Init(void)
     result += SHT31_Write_Command(SHT31_CLEARSTATUS);
     while(HAL_I2C_GetState(&hi2c1)!=HAL_I2C_STATE_READY);
     
+    result += SHT31_Write_Command(SHT31_HEATERDIS);
+    while(HAL_I2C_GetState(&hi2c1)!=HAL_I2C_STATE_READY);
+    
     return result;
 }
 

@@ -68,17 +68,17 @@ void Display_DigitalClock(void)
 
     // SHT31_Read_Data();
 
-    temp = SHT31_Get_Temperature();
-    humid = SHT31_Get_Humidity();
+//     temp = SHT31_Get_Temperature();
+//     humid = SHT31_Get_Humidity();
   
-    sprintf(TempString,"%hd.%1d",(int16_t)temp,((uint16_t)(temp*10)%10));
-    Clear_StringSpvoid Display_DigitalClock(void)
-{ace(TEMP_X,TEMP_Y,(int8_t *)TempString,3);
-    ILI9325_DrawString(TEMP_X,TEMP_Y,(int8_t *)TempString,ILI9325_BLUE,3);
+//     sprintf(TempString,"%hd.%1d",(int16_t)temp,((uint16_t)(temp*10)%10));
+//     Clear_StringSpvoid Display_DigitalClock(void)
+// {ace(TEMP_X,TEMP_Y,(int8_t *)TempString,3);
+//     ILI9325_DrawString(TEMP_X,TEMP_Y,(int8_t *)TempString,ILI9325_BLUE,3);
 
-    sprintf(HumidString,"%hd.%1d",(int16_t)humid,((uint16_t)(humid*10)%10));
-    Clear_StringSpace(HUMI_X,HUMI_Y,(int8_t *)HumidString,3);
-    ILI9325_DrawString(HUMI_X,HUMI_Y,(int8_t *)HumidString,ILI9325_BLUE,3);
+//     sprintf(HumidString,"%hd.%1d",(int16_t)humid,((uint16_t)(humid*10)%10));
+//     Clear_StringSpace(HUMI_X,HUMI_Y,(int8_t *)HumidString,3);
+//     ILI9325_DrawString(HUMI_X,HUMI_Y,(int8_t *)HumidString,ILI9325_BLUE,3);
     
   }
 

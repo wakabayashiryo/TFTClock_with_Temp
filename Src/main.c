@@ -167,13 +167,13 @@ int main(void)
   {
 
     SHT31_Read_Data();
-    // temp = SHT31_Get_Temperature();
-    // humid = SHT31_Get_Humidity();
+    temp = SHT31_Get_Temperature();
+    humid = SHT31_Get_Humidity();
     
-    // xprintf("%d.%1d %d.%1d\n",(int16_t)temp,((int16_t)(temp*10)%10),(int16_t)humid,((int16_t)(humid*10)%10));
+    xprintf("%d.%1d %d.%1d\n",(int16_t)temp,((int16_t)(temp*10)%10),(int16_t)humid,((int16_t)(humid*10)%10));
    
-    RTC_Get_Calendar(&hrtc,&sdate,&stime);
-    RTC_Show_Calendar(&hrtc,&sdate,&stime);
+    // RTC_Get_Calendar(&hrtc,&sdate,&stime);
+    // RTC_Show_Calendar(&hrtc,&sdate,&stime);
 
      xStream_fflush();
   }
