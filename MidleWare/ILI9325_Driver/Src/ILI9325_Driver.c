@@ -508,6 +508,35 @@ void ILI9325_DrawCircle(int16_t x0, int16_t y0, int16_t r,uint16_t color)
   }
 }
 
+void ILI9325_FillCircle(int16_t x0, int16_t y0, int16_t r,uint16_t color) 
+{
+    int16_t f     = 1 - r;
+    int16_t ddF_x = 1;
+    int16_t ddF_y = -2 * r;
+    int16_t x     = 0;
+    int16_t y     = r;
+
+    ILI9325_DrawFastVLine(x0, y0-r, 2*r+1, color);
+
+    while (x<y) 
+    {
+        if (f >= 0) 
+        {
+            y--;
+            ddF_y += 2;
+            f     += ddF_y;
+        }
+        x++;
+        ddF_x += 2;
+        f     += ddF_x;
+
+        ILI9325_DrawFastVLine(x0+x, y0-y, 2*y+1, color);
+        ILI9325_DrawFastVLine(x0+y, y0-x, 2*x+1, color);
+        ILI9325_DrawFastVLine(x0-x, y0-y, 2*y+1, color);
+        ILI9325_DrawFastVLine(x0-y, y0-x, 2*x+1, color);
+    }
+}
+
 void ILI9325_FillScreen(uint16_t color)
 {
       

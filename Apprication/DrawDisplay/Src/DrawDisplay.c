@@ -6,12 +6,28 @@ static uint16_t BackColor = ILI9325_BLACK;
 static uint16_t ProcessCount_Envir = PROCESSTIME_ENVIR-1;
 
 static uint8_t PreviousMinutes;
+static uint8_t PreviousHours;
 static uint8_t PreviousSeconds;
 static uint8_t PreviousDate;
 
 static const float AnalogXY[] = 
 {
- 1.000, 0.000,
+ 0.000, -1.000,
+ 0.105, -0.995,
+ 0.208, -0.978,
+ 0.309, -0.951,
+ 0.407, -0.914,
+ 0.500, -0.866,
+ 0.588, -0.809,
+ 0.669, -0.743,
+ 0.743, -0.669,
+ 0.809, -0.588,
+ 0.866, -0.500,
+ 0.914, -0.407,
+ 0.951, -0.309,
+ 0.978, -0.208,
+ 0.995, -0.105,
+ 1.000,  0.000,
  0.995,  0.105,
  0.978,  0.208,
  0.951,  0.309,
@@ -56,21 +72,7 @@ static const float AnalogXY[] =
 -0.309, -0.951,
 -0.208, -0.978,
 -0.105, -0.995,
--0.000, -1.000,
- 0.105, -0.995,
- 0.208, -0.978,
- 0.309, -0.951,
- 0.407, -0.914,
- 0.500, -0.866,
- 0.588, -0.809,
- 0.669, -0.743,
- 0.743, -0.669,
- 0.809, -0.588,
- 0.866, -0.500,
- 0.914, -0.407,
- 0.951, -0.309,
- 0.978, -0.208,
- 0.995, -0.105,
+ 
 };
 
 RTC_HandleTypeDef hrtc;
@@ -141,14 +143,20 @@ void Display_DigitalClock(void)
 
 }
 
-void Calcu_HourHand(uint16_t x,uint16_t y,uint16_t r,uint8_t color)
+static void Draw_HourHand(uint16_t x,uint16_t y,uint16_t r,uint8_t time,uint16_t color)
 {
   uint16_t x2,y2;
 
-  x2 = x+(int16_t)((float)r*AnalogXY[stime.Seconds*2  ]);
-  y2 = y+(int16_t)((float)r*AnalogXY[stime.Seconds*2+1]);  
+  x2 = x+(int16_t)((float)r*AnalogXY[time*2  ]);
+  y2 = y+(int16_t)((float)r*AnalogXY[time*2+1]);  
 
   ILI9325_DrawLine(x,y,x2,y2,color);
+  ILI9325_DrawLine(x-1,y-1,x2-1,y2-1,color);
+  ILI9325_DrawLine(x-2,y-2,x2-2,y2-2,color);
+  ILI9325_DrawLine(x+1,y+1,x2+1,y2+1,color);
+  ILI9325_DrawLine(x+2,y+2,x2+2,y2+2,color);
+
+  ILI9325_FillCircle(160,120,5,ILI9325_RED);
 }
 
 void Display_AnalogClock(void)
@@ -163,11 +171,15 @@ void Display_AnalogClock(void)
 
     Display_DrawString(CLCOKDATE_X,CLCOKDATE_Y,ILI9325_Color565(0,188,212),2,"%4d-%02d-%02d[%s] ",2000 + sdate.Year,sdate.Month,sdate.Date,RTC_Get_WeekDay_Char(&sdate));
   }
+  if(stime.Minutes!=PreviousMinutes)
+  { 
+    ILI9325_FillCircle(160,120,115,BackColor);
 
-  // Calcu_HourHand(160,120,120,ILI9325_BLACK);
+    Draw_HourHand(160,120,60,(stime.Hours<13)? stime.Hours*5:stime.Hours*2.5,ILI9325_GREEN);
 
-  // ILI9325_DrawCircle(160,120,120,ILI9325_BLACK);
-  // ILI9325_DrawCircle(160,120,119,ILI9325_BLACK);
+    PreviousMinutes = stime.Minutes;
+    Draw_HourHand(160,120,115,stime.Minutes,ILI9325_BLUE);
+  }
 
   if((++ProcessCount_Envir)>PROCESSTIME_ENVIR)
   {

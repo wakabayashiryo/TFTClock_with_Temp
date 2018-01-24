@@ -116,7 +116,8 @@ int main(void)
   ILI9325_SetRotation(3);
   Display_Set_BackColor(ILI9325_Color565(255,255,255));
 
-  Display_Set_Blightless(3);
+  Display_Set_Blightless(3);    
+  ILI9325_FillCircle(160,120,120,ILI9325_BLACK);
 
   MX_USART2_UART_Init();
   uint8_t stream_buff[1000];
@@ -132,11 +133,11 @@ int main(void)
   MX_RTC_Init();
   sdate.Year = 18;
   sdate.Month = 1;
-  sdate.Date = 24;
-  sdate.WeekDay = RTC_WEEKDAY_WEDNESDAY;
+  sdate.Date = 25;
+  sdate.WeekDay = RTC_WEEKDAY_THURSDAY;
 
-  stime.Hours = 22;
-  stime.Minutes = 57;
+  stime.Hours = 0;
+  stime.Minutes = 8;
   stime.Seconds = 00;
 
   // RTC_Set_Calendar(&hrtc,&sdate,&stime);
