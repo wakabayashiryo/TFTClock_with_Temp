@@ -57,6 +57,20 @@ void mTouch_Count1ms(void)
     }
 }
 
+uint16_t mTouch_Get_RawValue(uint8_t elements)
+{
+    if(using_channel<=elements)return 0;
+    
+    return config_ptr[elements].CPS_Data;
+}
+
+uint16_t mTouch_Get_DiffValue(uint8_t elements)
+{
+    if(using_channel<=elements)return 0;
+
+    return (int16_t)(config_ptr[elements].CPS_PreData-config_ptr[elements].CPS_Data);
+}
+
 uint8_t mTouch_Check(uint8_t elements)
 {
     if(using_channel<=elements)return 0;

@@ -33,6 +33,8 @@ void mTouch_Init(mTouch_Init_PORTTypedef mTouch_PortInit,CPS_CHANNELCONFIG *cps_
 
 void mTouch_Scan(void);
 void mTouch_Count1ms(void);
+uint16_t mTouch_Get_RawValue(uint8_t elements);
+uint16_t mTouch_Get_DiffValue(uint8_t elements);
 uint8_t mTouch_Check(uint8_t elements);
 
 void mTouch_Display_Config(void);

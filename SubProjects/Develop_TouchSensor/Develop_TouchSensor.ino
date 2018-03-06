@@ -6,7 +6,7 @@
 #define READREG_STAT 0x44
 
 
-void Set_Threshould(uint16_t th1,uint16_t th2,uint16_t Duration);
+void Set_Threshould(uint16_t th1,uint16_t th2);
 void Read_Status(void);
 
 void setup() 
@@ -14,7 +14,7 @@ void setup()
   Wire.begin();        // join i2c bus (address optional for master)
   Serial.begin(9600);  // start serial for output
 
-  Set_Threshould(200,200,5);
+  Set_Threshould(400,400);
 }
 
 void loop() 
@@ -30,19 +30,17 @@ void I2C_Write_Register(uint8_t data)
 }
 
 
-void Set_Threshould(uint16_t th1,uint16_t th2,uint16_t Duration)
+void Set_Threshould(uint16_t th1,uint16_t th2)
 {
   uint8_t sentByte = 0;
   int8_t check = 0;
   
   I2C_Write_Register(SETREG_THU);
   
-  sentByte += Wire.write( th1&0x00FF    );
   sentByte += Wire.write((th1&0xFF00)>>8);
-  sentByte += Wire.write( th2&0x00FF    );
+  sentByte += Wire.write( th1&0x00FF    );
   sentByte += Wire.write((th2&0xFF00)>>8);
-  sentByte += Wire.write( Duration&0x00FF    );
-  sentByte += Wire.write((Duration&0xFF00)>>8);
+  sentByte += Wire.write( th2&0x00FF    );
   
   check = Wire.endTransmission();
   if(check!=0)
@@ -52,7 +50,7 @@ void Set_Threshould(uint16_t th1,uint16_t th2,uint16_t Duration)
     Serial.println("]");
     while(1);
   }
-  if(sentByte!=6)
+  if(sentByte!=4)
   {
     Serial.print("Invalid number of sent[");
     Serial.print(sentByte);
@@ -74,12 +72,19 @@ void Read_Status(void)
 {
   I2C_Write_Register(READREG_STAT);
   Wire.endTransmission();
-  Wire.requestFrom(DEVICE_ADDRESS,1);    // request 6 bytes from slave device #8
+  Wire.requestFrom(DEVICE_ADDRESS,5);    
 
-  while (Wire.available()) 
-  { // slave may send less than requested
-    uint8_t c = Wire.read(); // receive a byte as character
-   Serial.print(c,BIN);
+  if(Wire.available()) 
+  { 
+    uint8_t header = Wire.read(); // receive a byte as character
+    uint16_t value_ch1 = (Wire.read()<<8)|Wire.read();
+    uint16_t value_ch2 = (Wire.read()<<8)|Wire.read();
+
+    char strg[100];
+    sprintf(strg," %5d %5d",value_ch1,value_ch2);  
+    
+    Serial.print(header,HEX);
+    Serial.print(strg); 
   } 
    Serial.println();
 }
