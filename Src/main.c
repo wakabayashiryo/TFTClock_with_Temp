@@ -132,12 +132,12 @@ int main(void)
 
   MX_RTC_Init();
   sdate.Year = 18;
-  sdate.Month = 1;
-  sdate.Date = 25;
+  sdate.Month = 3;
+  sdate.Date = 6;
   sdate.WeekDay = RTC_WEEKDAY_THURSDAY;
 
-  stime.Hours = 0;
-  stime.Minutes = 8;
+  stime.Hours = 20;
+  stime.Minutes = 51;
   stime.Seconds = 00;
 
   // RTC_Set_Calendar(&hrtc,&sdate,&stime);
@@ -151,7 +151,7 @@ int main(void)
 
   MX_TIM2_Init();
   Buzzer_Start();
-
+  Buzzer_Set_Frequency(1000);
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -161,8 +161,9 @@ int main(void)
   /* Infinite loop */
   while (1)
   {
-
-    SHT31_Read_Data();
+    // Buzzer_ON();
+    // SHT31_Read_Data();
+    
     // temp = SHT31_Get_Temperature();
     // humid = SHT31_Get_Humidity();
     
