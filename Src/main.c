@@ -126,7 +126,7 @@ int main(void)
   MX_I2C1_Init();
   SHT31_Init();
 
-  TouchSense_Set_Configuration(1000,1000,100);
+  TouchSense_Set_Configuration(500,500);
 
   SHT31_Read_Data();
 
@@ -163,16 +163,17 @@ int main(void)
   {
     // Buzzer_ON();
     // SHT31_Read_Data();
-    
+
     // temp = SHT31_Get_Temperature();
     // humid = SHT31_Get_Humidity();
     
     // xprintf("%d.%1d %d.%1d\n",(int16_t)temp,((int16_t)(temp*10)%10),(int16_t)humid,((int16_t)(humid*10)%10));
    
-    RTC_Get_Calendar(&hrtc,&sdate,&stime);
-    RTC_Show_Calendar(&hrtc,&sdate,&stime);
-
-     xStream_fflush();
+    // RTC_Get_Calendar(&hrtc,&sdate,&stime);
+    // RTC_Show_Calendar(&hrtc,&sdate,&stime);
+    TouchSense_Read_Value();
+    xprintf("ch1=%5d ch2=%5d\n",TouchSense_Get_Value1(),TouchSense_Get_Value2());
+    xStream_fflush();
   }
 
 }

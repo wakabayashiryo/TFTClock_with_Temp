@@ -16,11 +16,13 @@ extern "C" {
 
 #define TOUCH_ADDRESS (0x56<<1)
 
-#define F1822_CONFIG 0x33
-#define F1822_STATUS   0x44
+#define F1822_CONFIG   0x33
+#define F1822_VALUE    0x44
 
-int8_t TouchSense_Set_Configuration(uint16_t th1,uint16_t th2,uint16_t dur);
-int8_t TouchSense_Read_Status(void);
+int8_t TouchSense_Set_Configuration(uint16_t th1,uint16_t th2);
+int8_t TouchSense_Read_Value(void);
+uint16_t TouchSense_Get_Value1(void);
+uint16_t TouchSense_Get_Value2(void);
 
 
 #ifdef	__cplusplus
