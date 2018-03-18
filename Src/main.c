@@ -156,23 +156,28 @@ int main(void)
 
   /* USER CODE END 2 */
   float temp,humid;
-  
+
+  uint32_t SensorRegular[2]={0};
+  for(uint32_t i=0;i<32;i++)
+  {
+    SensorRegular[0] += TouchSense_Get_Value1();
+    SensorRegular[1] += TouchSense_Get_Value2();
+    HAL_Delay(1);
+  } 
 
   /* Infinite loop */
   while (1)
   {
     // Buzzer_ON();
-    // SHT31_Read_Data();
-
-    // temp = SHT31_Get_Temperature();
-    // humid = SHT31_Get_Humidity();
     
-    // xprintf("%d.%1d %d.%1d\n",(int16_t)temp,((int16_t)(temp*10)%10),(int16_t)humid,((int16_t)(humid*10)%10));
-   
     // RTC_Get_Calendar(&hrtc,&sdate,&stime);
     // RTC_Show_Calendar(&hrtc,&sdate,&stime);
-    TouchSense_Read_Value();
-    xprintf("ch1=%5d ch2=%5d\n",TouchSense_Get_Value1(),TouchSense_Get_Value2());
+    xprintf("Touching ");
+    if(SensorRegular[0]+1000>TouchSense_Get_Value1())
+      xprintf("ch1 ");    
+    if(SensorRegular[1]+1000>TouchSense_Get_Value2())
+      xprintf("ch2 ");    
+    xprintf("\n");
     xStream_fflush();
   }
 
