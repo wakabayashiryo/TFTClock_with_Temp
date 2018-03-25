@@ -19,11 +19,20 @@ extern "C" {
 #define F1822_CONFIG   0x33
 #define F1822_VALUE    0x44
 
+#define SCANRATE    10
+
+typedef struct 
+{
+    uint16_t threshould;
+    uint32_t regular;
+    uint16_t TouchCount_ms;
+    uint16_t StoreTime;
+}SensorValue;
+
 int8_t TouchSense_Set_Configuration(uint16_t th1,uint16_t th2);
 int8_t TouchSense_Read_Value(void);
-uint16_t TouchSense_Get_Value1(void);
-uint16_t TouchSense_Get_Value2(void);
-
+void TouchSense_Count_Touching(void);
+uint16_t TouchSense_Get_TouchTime(uint8_t ch);
 
 #ifdef	__cplusplus
 }

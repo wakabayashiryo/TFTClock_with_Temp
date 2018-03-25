@@ -138,8 +138,7 @@ void TIM1_UP_TIM10_IRQHandler(void)
 
   /* USER CODE END TIM1_UP_TIM10_IRQn 0 */
   HAL_TIM_IRQHandler(&htim1);
-  TouchSense_Read_Value();
-
+  TouchSense_Count_Touching();
   // Display_DigitalClock();
   Display_AnalogClock();  
   /* USER CODE BEGIN TIM1_UP_TIM10_IRQn 1 */

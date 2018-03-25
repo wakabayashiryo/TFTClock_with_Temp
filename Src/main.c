@@ -126,7 +126,7 @@ int main(void)
   MX_I2C1_Init();
   SHT31_Init();
 
-  TouchSense_Set_Configuration(500,500);
+  TouchSense_Set_Configuration(300,300);
 
   SHT31_Read_Data();
 
@@ -156,27 +156,21 @@ int main(void)
 
   /* USER CODE END 2 */
   float temp,humid;
-
-  uint32_t SensorRegular[2]={0};
-  for(uint32_t i=0;i<32;i++)
-  {
-    SensorRegular[0] += TouchSense_Get_Value1();
-    SensorRegular[1] += TouchSense_Get_Value2();
-    HAL_Delay(1);
-  } 
-
-  /* Infinite loop */
+  uint8_t toggle = 0;
+  // /* Infinite loop */
   while (1)
   {
+    // TouchSense_Read_Value();
+    
     // Buzzer_ON();
     
     // RTC_Get_Calendar(&hrtc,&sdate,&stime);
     // RTC_Show_Calendar(&hrtc,&sdate,&stime);
-    xprintf("Touching ");
-    if(SensorRegular[0]+1000>TouchSense_Get_Value1())
-      xprintf("ch1 ");    
-    if(SensorRegular[1]+1000>TouchSense_Get_Value2())
-      xprintf("ch2 ");    
+    if(TouchSense_Get_TouchTime(0)>2000)
+        toggle = !toggle;
+    xprintf("Touching %d",TouchSense_Get_TouchTime(0));
+      if(toggle)xprintf("ch1 ");    
+      // xprintf("ch2 ");    
     xprintf("\n");
     xStream_fflush();
   }
