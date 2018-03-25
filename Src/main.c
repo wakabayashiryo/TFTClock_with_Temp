@@ -124,11 +124,11 @@ int main(void)
   xStream_Setbuf(stream_buff,sizeof(stream_buff));
 
   MX_I2C1_Init();
+
   SHT31_Init();
+  SHT31_Read_Data();
 
   TouchSense_Set_Configuration(500,500);
-
-  SHT31_Read_Data();
 
   MX_RTC_Init();
   sdate.Year = 18;
@@ -144,10 +144,7 @@ int main(void)
   
   MX_TIM1_Init();
   if(HAL_TIM_Base_Start_IT(&htim1) != HAL_OK)
-  {
-    /* Starting Error */
     Error_Handler();
-  }
 
   MX_TIM2_Init();
   Buzzer_Start();
@@ -162,17 +159,17 @@ int main(void)
   while (1)
   {
     // Buzzer_ON();
-    // SHT31_Read_Data();
+    SHT31_Read_Data();
 
-    // temp = SHT31_Get_Temperature();
-    // humid = SHT31_Get_Humidity();
+    temp = SHT31_Get_Temperature();
+    humid = SHT31_Get_Humidity();
     
-    // xprintf("%d.%1d %d.%1d\n",(int16_t)temp,((int16_t)(temp*10)%10),(int16_t)humid,((int16_t)(humid*10)%10));
+    xprintf("%d.%1d %d.%1d\n",(int16_t)temp,((int16_t)(temp*10)%10),(int16_t)humid,((int16_t)(humid*10)%10));
    
     // RTC_Get_Calendar(&hrtc,&sdate,&stime);
     // RTC_Show_Calendar(&hrtc,&sdate,&stime);
-    TouchSense_Read_Value();
-    xprintf("ch1=%5d ch2=%5d\n",TouchSense_Get_Value1(),TouchSense_Get_Value2());
+    // TouchSense_Read_Value();
+    // xprintf("ch1=%5d ch2=%5d\n",TouchSense_Get_Value1(),TouchSense_Get_Value2());
     xStream_fflush();
   }
 
