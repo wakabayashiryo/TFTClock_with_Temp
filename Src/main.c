@@ -124,30 +124,27 @@ int main(void)
   xStream_Setbuf(stream_buff,sizeof(stream_buff));
 
   MX_I2C1_Init();
+
   SHT31_Init();
+  SHT31_Read_Data();
 
   TouchSense_Set_Configuration(300,300);
-
-  SHT31_Read_Data();
 
   MX_RTC_Init();
   sdate.Year = 18;
   sdate.Month = 3;
-  sdate.Date = 6;
-  sdate.WeekDay = RTC_WEEKDAY_THURSDAY;
+  sdate.Date = 25;
+  sdate.WeekDay = RTC_WEEKDAY_SUNDAY;
 
-  stime.Hours = 20;
-  stime.Minutes = 51;
+  stime.Hours = 12;
+  stime.Minutes = 20;
   stime.Seconds = 00;
 
   // RTC_Set_Calendar(&hrtc,&sdate,&stime);
   
   MX_TIM1_Init();
   if(HAL_TIM_Base_Start_IT(&htim1) != HAL_OK)
-  {
-    /* Starting Error */
     Error_Handler();
-  }
 
   MX_TIM2_Init();
   Buzzer_Start();
@@ -174,7 +171,6 @@ int main(void)
     xprintf("\n");
     xStream_fflush();
   }
-
 }
 
 /** System Clock Configuration
@@ -420,7 +416,7 @@ static void MX_DMA_Init(void)
 
   /* DMA interrupt init */
   /* DMA1_Stream0_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(DMA1_Stream0_IRQn, 0, 0);
+  HAL_NVIC_SetPriority(DMA1_Stream0_IRQn, 0, 1);
   HAL_NVIC_EnableIRQ(DMA1_Stream0_IRQn);
   /* DMA1_Stream6_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(DMA1_Stream6_IRQn, 0, 0);

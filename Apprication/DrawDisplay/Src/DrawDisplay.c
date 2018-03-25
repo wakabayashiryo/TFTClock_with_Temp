@@ -235,3 +235,12 @@ void Display_Process_BackLight(void)
      
   if(++count>7)count = 0;
 }
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+  UNUSED(htim);
+  
+  Display_Process_BackLight();  
+  TouchSense_Count_Touching();
+  Display_DigitalClock();
+  // Display_AnalogClock(); 
+}

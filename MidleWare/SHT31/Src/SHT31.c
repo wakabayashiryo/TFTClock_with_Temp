@@ -11,11 +11,15 @@ static int8_t SHT31_Write_Command(uint16_t data)
     
     data_arr[0] = (data&0xFF00)>>8;
     data_arr[1] = data&0x00FF;
-    if(HAL_I2C_Master_Transmit_DMA(&hi2c1,SHT31_ADDRESS,data_arr,2)==HAL_ERROR)
-        result = 1;
-        
+
     while(HAL_I2C_GetState(&hi2c1)!=HAL_I2C_STATE_READY);
-    
+
+    while(HAL_I2C_Master_Transmit_DMA(&hi2c1,SHT31_ADDRESS,data_arr,2)!=HAL_OK)
+    {
+        if(HAL_I2C_GetError(&hi2c1)!=HAL_I2C_ERROR_AF)
+            Error_Handler();
+    } 
+        
     return result;
 }
 
@@ -24,10 +28,8 @@ int8_t SHT31_Init(void)
     int8_t result = 0;
     
     result += SHT31_Write_Command(SHT31_SOFTRESET);
-    while(HAL_I2C_GetState(&hi2c1)!=HAL_I2C_STATE_READY);
         
     result += SHT31_Write_Command(SHT31_CLEARSTATUS);
-    while(HAL_I2C_GetState(&hi2c1)!=HAL_I2C_STATE_READY);
     
     return result;
 }
@@ -38,11 +40,14 @@ int8_t SHT31_Read_Data(void)
 
     SHT31_Write_Command(SHT31_MEAS_HIGHREP_STRETCH);//Start Mesurement Teperature and Humidity
 
-    if(HAL_I2C_Master_Receive_DMA(&hi2c1,SHT31_ADDRESS,Data_array,6)==HAL_ERROR)
-        result = 1;
-    
     while(HAL_I2C_GetState(&hi2c1)!=HAL_I2C_STATE_READY);
-        
+
+    while(HAL_I2C_Master_Receive_DMA(&hi2c1,SHT31_ADDRESS,Data_array,6)!=HAL_OK)
+    {
+        if(HAL_I2C_GetError(&hi2c1)!=HAL_I2C_ERROR_AF)
+            Error_Handler();
+    } 
+      
     return result;
 }
 
