@@ -40,7 +40,7 @@
 #include "stm32f4xx_hal.h"
 
 /* USER CODE BEGIN Includes */
-
+uint32_t TIM1_Counter;
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -150,27 +150,34 @@ int main(void)
   Buzzer_Start();
   Buzzer_Set_Frequency(1000);
   /* USER CODE BEGIN 2 */
-
+  uint32_t i=0;
+  uint32_t pre_count;
   /* USER CODE END 2 */
-  float temp,humid;
-  uint8_t toggle = 0;
   // /* Infinite loop */
   while (1)
   {
     // TouchSense_Read_Value();
-    
+    if(pre_count!=TIM1_Counter)
+    {
+      xprintf("%d\n",++i);
+      
+      // Display_DigitalClock();
+      // Display_AnalogClock(); 
+      // TouchSense_Count_Touching();  
+    }
+    pre_count = TIM1_Counter;
     // Buzzer_ON();
-    
-    // RTC_Get_Calendar(&hrtc,&sdate,&stime);
-    // RTC_Show_Calendar(&hrtc,&sdate,&stime);
-    if(TouchSense_Get_TouchTime(0)>2000)
-        toggle = !toggle;
-    xprintf("Touching %d",TouchSense_Get_TouchTime(0));
-      if(toggle)xprintf("ch1 ");    
-      // xprintf("ch2 ");    
-    xprintf("\n");
     xStream_fflush();
   }
+}
+
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+  UNUSED(htim);
+
+  TIM1_Counter++;
+  
+  Display_Process_BackLight();  
 }
 
 /** System Clock Configuration
@@ -313,7 +320,7 @@ static void MX_TIM1_Init(void)
   TIM_MasterConfigTypeDef sMasterConfig;
 
   htim1.Instance = TIM1;
-  htim1.Init.Prescaler = 84;
+  htim1.Init.Prescaler = 84-1;
   htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim1.Init.Period = 1000;
   htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;

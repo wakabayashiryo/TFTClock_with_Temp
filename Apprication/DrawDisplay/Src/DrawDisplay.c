@@ -5,10 +5,9 @@
 static uint16_t BackColor = ILI9325_BLACK;
 static uint16_t ProcessCount_Envir = PROCESSTIME_ENVIR-1;
 
-static uint8_t PreviousMinutes;
-static uint8_t PreviousHours;
-static uint8_t PreviousSeconds;
 static uint8_t PreviousDate;
+static uint8_t PreviousSeconds;
+static uint8_t PreviousMinutes;
 
 static const float AnalogXY[] = 
 {
@@ -232,15 +231,6 @@ void Display_Process_BackLight(void)
     default:
     break;
   }
-     
-  if(++count>7)count = 0;
-}
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
-{
-  UNUSED(htim);
   
-  Display_Process_BackLight();  
-  TouchSense_Count_Touching();
-  Display_DigitalClock();
-  // Display_AnalogClock(); 
+  if(++count>7)count = 0;
 }
