@@ -20,7 +20,7 @@ void main(void)
     
     Basic_Init();
     
-    I2C1_Init(I2C_Init_Port,0x56,I2C_MODE_SLAVE,I2C_SPEED_STANDARD);
+    I2C1_Init(I2C_Init_Port,0x56,I2C_MODE_SLAVE,I2C_SPEED_HIGH);
             
     Timer0_Init(TMR0_PRESCALER64,125);//set interrupt time is 1ms
     

@@ -4,6 +4,8 @@ I2C_HandleTypeDef hi2c1;
 static uint8_t ReceiveDatas[5];
 static SensorValue sval[2];
 
+static int8_t TouchSense_Read_Value(void);
+
 #define TouchSense_Get_Value1() (uint16_t)((ReceiveDatas[1]<<8)|ReceiveDatas[2])
 #define TouchSense_Get_Value2() (uint16_t)((ReceiveDatas[3]<<8)|ReceiveDatas[4])
 
@@ -38,13 +40,13 @@ int8_t TouchSense_Set_Configuration(uint16_t th1,uint16_t th2)
         sval[1].regular += TouchSense_Get_Value2();
         HAL_Delay(1);
     } 
-    sval[0].regular = sval[0].regular>>6;
-    sval[1].regular = sval[1].regular>>6;
+    sval[0].regular = sval[0].regular/32;
+    sval[1].regular = sval[1].regular/32;
 
     return 0;
 }
 
-int8_t TouchSense_Read_Value(void)
+static int8_t TouchSense_Read_Value(void)
 {
     uint8_t ReadRegister = F1822_VALUE;
 
@@ -70,26 +72,27 @@ int8_t TouchSense_Read_Value(void)
 void TouchSense_Count_Touching(void)
 {
     static uint16_t count=0;
-    if(++count>SCANRATE)
+
+    if(++count>_SCANRATE)
     {
         count = 0;
         TouchSense_Read_Value();
         
-        if(TouchSense_Get_Value1()>(sval[0].threshould+sval[0].regular))
+        if(TouchSense_Get_Value1()<(sval[0].regular-sval[0].threshould))
         {
-            sval[0].TouchCount_ms += SCANRATE;
+            sval[0].TouchCount_ms += _SCANRATE;
         }   
-        else
+        else 
         {
             sval[0].StoreTime = sval[0].TouchCount_ms;
             sval[0].TouchCount_ms = 0;
         }
-        
-        if(TouchSense_Get_Value2()>(sval[1].threshould+sval[1].regular))
+
+        if(TouchSense_Get_Value2()<(sval[1].regular-sval[1].threshould))
         {
-            sval[1].TouchCount_ms += SCANRATE;
+            sval[1].TouchCount_ms += _SCANRATE;
         }   
-        else
+        else 
         {
             sval[1].StoreTime = sval[1].TouchCount_ms;
             sval[1].TouchCount_ms = 0;
@@ -100,10 +103,18 @@ void TouchSense_Count_Touching(void)
 uint16_t TouchSense_Get_TouchTime(uint8_t ch)
 {
     if(ch>1)return 0;
-    uint16_t time_temp;
-
+    uint16_t time_temp = 0;
+    
     time_temp = sval[ch].StoreTime;
     sval[ch].StoreTime = 0;
 
     return time_temp;
+}
+
+void TouchSence_Display_Value(void)
+{
+    xprintf("[ch1] <regular> %5d <threshould> %5d <value> %5d <TouchCount> %5d", sval[0].regular,sval[0].threshould,TouchSense_Get_Value1(),sval[0].TouchCount_ms);
+    xprintf("[ch2] <regular> %5d <threshould> %5d <value> %5d <TouchCount> %5d", sval[1].regular,sval[1].threshould,TouchSense_Get_Value2(),sval[1].TouchCount_ms);
+    xprintf("\n");
+    xStream_fflush();
 }
