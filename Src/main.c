@@ -117,7 +117,7 @@ int main(void)
   Display_Set_BackColor(ILI9325_Color565(255,255,255));
 
   Display_Set_Blightless(3);    
-  ILI9325_FillCircle(160,120,120,ILI9325_BLACK);
+  // ILI9325_FillCircle(160,120,120,ILI9325_BLACK);
 
   MX_USART2_UART_Init();
   uint8_t stream_buff[1000]={0};
@@ -133,11 +133,11 @@ int main(void)
   MX_RTC_Init();
   sdate.Year = 18;
   sdate.Month = 4;
-  sdate.Date = 7;
-  sdate.WeekDay = RTC_WEEKDAY_SATURDAY;
+  sdate.Date = 8;
+  sdate.WeekDay = RTC_WEEKDAY_SUNDAY;
 
-  stime.Hours = 10;
-  stime.Minutes = 55;
+  stime.Hours = 12;
+  stime.Minutes = 17;
   stime.Seconds = 00;
 
   // RTC_Set_Calendar(&hrtc,&sdate,&stime);
@@ -161,9 +161,8 @@ int main(void)
     if(pre_count!=TIM1_Counter)
     {
       TouchSense_Count_Touching();
-      // Display_DigitalClock();
+      Display_DigitalClock();
       // Display_AnalogClock(); 
-      // TouchSense_Count_Touching();  
     }
     pre_count = TIM1_Counter;
 

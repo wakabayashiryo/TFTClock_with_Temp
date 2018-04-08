@@ -130,7 +130,7 @@ void Display_DigitalClock(void)
   {
     ProcessCount_Envir = 0;
 
-    // SHT31_Read_Data();
+    SHT31_Read_Data();
 
     temp = SHT31_Get_Temperature();
     humid = SHT31_Get_Humidity();
