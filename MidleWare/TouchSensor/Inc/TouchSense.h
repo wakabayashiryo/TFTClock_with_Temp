@@ -19,7 +19,8 @@ extern "C" {
 #define F1822_CONFIG   0x33
 #define F1822_VALUE    0x44
 
-#define _SCANRATE    1
+/*assign scan time */
+#define _SCANRATE    1  
 
 typedef struct 
 {

@@ -40,6 +40,7 @@ int8_t TouchSense_Set_Configuration(uint16_t th1,uint16_t th2)
         sval[1].regular += TouchSense_Get_Value2();
         HAL_Delay(1);
     } 
+    /*Calculate average when fingure releace from pad*/
     sval[0].regular = sval[0].regular/32;
     sval[1].regular = sval[1].regular/32;
 
@@ -76,25 +77,28 @@ void TouchSense_Count_Touching(void)
     if(++count>_SCANRATE)
     {
         count = 0;
+        
         TouchSense_Read_Value();
         
+        /*when fingure put on pad*/
         if(TouchSense_Get_Value1()<(sval[0].regular-sval[0].threshould))
         {
-            sval[0].TouchCount_ms += _SCANRATE;
+            sval[0].TouchCount_ms += _SCANRATE;//add time value during putting figure on pad
         }   
-        else 
+        else/*When fingure releace from pad*/
         {
-            sval[0].StoreTime = sval[0].TouchCount_ms;
+            sval[0].StoreTime = sval[0].TouchCount_ms;//save increased time value 
             sval[0].TouchCount_ms = 0;
         }
 
+        /*when fingure put on pad*/
         if(TouchSense_Get_Value2()<(sval[1].regular-sval[1].threshould))
         {
-            sval[1].TouchCount_ms += _SCANRATE;
+            sval[1].TouchCount_ms += _SCANRATE;//add time value during putting figure on pad
         }   
-        else 
+        else /*When fingure releace from pad*/
         {
-            sval[1].StoreTime = sval[1].TouchCount_ms;
+            sval[1].StoreTime = sval[1].TouchCount_ms;//save increased time value 
             sval[1].TouchCount_ms = 0;
         }
     }
@@ -113,8 +117,8 @@ uint16_t TouchSense_Get_TouchTime(uint8_t ch)
 
 void TouchSence_Display_Value(void)
 {
-    xprintf("[ch1] <regular> %5d <threshould> %5d <value> %5d <TouchCount> %5d", sval[0].regular,sval[0].threshould,TouchSense_Get_Value1(),sval[0].TouchCount_ms);
-    xprintf("[ch2] <regular> %5d <threshould> %5d <value> %5d <TouchCount> %5d", sval[1].regular,sval[1].threshould,TouchSense_Get_Value2(),sval[1].TouchCount_ms);
+    xprintf("<ch1> [regular:%5d] [threshould:%5d] [value:%5d] [TouchCount:%5d]  ", sval[0].regular,sval[0].threshould,TouchSense_Get_Value1(),sval[0].TouchCount_ms);
+    xprintf("<ch2> [regular:%5d] [threshould:%5d] [value:%5d] [TouchCount:%5d]  ", sval[1].regular,sval[1].threshould,TouchSense_Get_Value2(),sval[1].TouchCount_ms);
     xprintf("\n");
     xStream_fflush();
 }

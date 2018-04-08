@@ -169,6 +169,7 @@ int main(void)
 
     t1 = TouchSense_Get_TouchTime(0);
     t2 = TouchSense_Get_TouchTime(1);
+
     if(t1>10)
       xprintf("ch1 %d",t1);
     if(t2>10)
