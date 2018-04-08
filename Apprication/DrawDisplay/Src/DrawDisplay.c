@@ -130,7 +130,7 @@ void Display_DigitalClock(void)
   {
     ProcessCount_Envir = 0;
 
-    // SHT31_Read_Data();
+    SHT31_Read_Data();
 
     temp = SHT31_Get_Temperature();
     humid = SHT31_Get_Humidity();
@@ -155,7 +155,7 @@ static void Draw_HourHand(uint16_t x,uint16_t y,uint16_t r,uint8_t time,uint16_t
   ILI9325_DrawLine(x+1,y+1,x2+1,y2+1,color);
   ILI9325_DrawLine(x+2,y+2,x2+2,y2+2,color);
 
-  ILI9325_FillCircle(160,120,5,ILI9325_RED);
+  ILI9325_FillCircle(110,120,2,ILI9325_BLACK);
 }
 
 void Display_AnalogClock(void)
@@ -172,19 +172,21 @@ void Display_AnalogClock(void)
   }
   if(stime.Minutes!=PreviousMinutes)
   { 
-    ILI9325_FillCircle(160,120,115,BackColor);
+    ILI9325_FillCircle(110,120,120,ILI9325_BLACK);
 
-    Draw_HourHand(160,120,60,(stime.Hours<13)? stime.Hours*5:stime.Hours*2.5,ILI9325_GREEN);
+    ILI9325_FillCircle(110,120,115,BackColor);
+
+    Draw_HourHand(110,120,60,(stime.Hours<13)? stime.Hours*5:stime.Hours*2.5,ILI9325_GREEN);
 
     PreviousMinutes = stime.Minutes;
-    Draw_HourHand(160,120,115,stime.Minutes,ILI9325_BLUE);
+    Draw_HourHand(110,120,115,stime.Minutes,ILI9325_BLUE);
   }
 
   if((++ProcessCount_Envir)>PROCESSTIME_ENVIR)
   {
     ProcessCount_Envir = 0;
 
-    // SHT31_Read_Data();
+    SHT31_Read_Data();
 
     temp = SHT31_Get_Temperature();
     humid = SHT31_Get_Humidity();

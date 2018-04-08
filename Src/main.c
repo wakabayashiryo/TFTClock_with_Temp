@@ -112,13 +112,12 @@ int main(void)
   MX_DMA_Init();
 
   ILI9325_Init();
-  ILI9325_FillScreen(ILI9325_Color565(255,255,255));
+  ILI9325_FillScreen(ILI9325_WHITE);
   ILI9325_SetRotation(3);
-  Display_Set_BackColor(ILI9325_Color565(255,255,255));
+  Display_Set_BackColor(ILI9325_WHITE);
 
   Display_Set_Blightless(3);    
-  ILI9325_FillCircle(160,120,120,ILI9325_BLACK);
-
+  
   MX_USART2_UART_Init();
   uint8_t stream_buff[1000]={0};
   xStream_Setbuf(stream_buff,sizeof(stream_buff));
@@ -162,8 +161,7 @@ int main(void)
     {
       TouchSense_Count_Touching();
       // Display_DigitalClock();
-      // Display_AnalogClock(); 
-      // TouchSense_Count_Touching();  
+      Display_AnalogClock(); 
     }
     pre_count = TIM1_Counter;
 
