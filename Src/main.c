@@ -116,8 +116,7 @@ int main(void)
   ILI9325_SetRotation(3);
   Display_Set_BackColor(ILI9325_Color565(255,255,255));
 
-  Display_Set_Blightless(3);    
-  // ILI9325_FillCircle(160,120,120,ILI9325_BLACK);
+  Display_Set_Blightless(7);    
 
   MX_USART2_UART_Init();
   uint8_t stream_buff[1000]={0};
@@ -126,22 +125,13 @@ int main(void)
   MX_I2C1_Init();
 
   SHT31_Init();
+  HAL_Delay(10);
   SHT31_Read_Data();
 
   TouchSense_Set_Configuration(500,500);
 
   MX_RTC_Init();
-  sdate.Year = 18;
-  sdate.Month = 4;
-  sdate.Date = 8;
-  sdate.WeekDay = RTC_WEEKDAY_SUNDAY;
-
-  stime.Hours = 12;
-  stime.Minutes = 17;
-  stime.Seconds = 00;
-
-  // RTC_Set_Calendar(&hrtc,&sdate,&stime);
-  
+   
   MX_TIM1_Init();
   if(HAL_TIM_Base_Start_IT(&htim1) != HAL_OK)
     Error_Handler();
@@ -155,26 +145,25 @@ int main(void)
   uint16_t t1,t2;
   /* USER CODE END 2 */
   
-  // /* Infinite loop */
+   /* Infinite loop */
   while (1)
   {
     if(pre_count!=TIM1_Counter)
     {
       TouchSense_Count_Touching();
       Display_DigitalClock();
-      // Display_AnalogClock(); 
     }
     pre_count = TIM1_Counter;
 
-    t1 = TouchSense_Get_TouchTime(0);
-    t2 = TouchSense_Get_TouchTime(1);
+  //   t1 = TouchSense_Get_TouchTime(0);
+  //   t2 = TouchSense_Get_TouchTime(1);
 
-    if(t1>10)
-      xprintf("ch1 %d",t1);
-    if(t2>10)
-      xprintf("ch2 %d",t2);
-  //  TouchSence_Display_Value();    
-    xStream_fflush();
+  //   if(t1>10)
+  //     xprintf("ch1 %d",t1);
+  //   if(t2>10)
+  //     xprintf("ch2 %d",t2);
+  // //  TouchSence_Display_Value();    
+  //   xStream_fflush();
   }
 }
 
