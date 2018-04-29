@@ -9,15 +9,13 @@ def printXY(x,y,r,time):
 def main():
     for i in range(0,60):
         (x,y) = printXY(0,0,10,i)
-        
-        if x>0:
-            print(" ",end="") 
-        print ("{0:.3f}, ".format(x), end="")
+     
         if y>0:
+            print(" ",end="") 
+        print ("{0:.5f},".format(y), end="")
+        if x<0:
             print(" ",end="")
-        print ("{0:.3f},".format(y))
-        
-
+        print ("{0:.5f},".format(-x))
 
 if __name__ == '__main__':
     main()

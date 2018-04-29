@@ -130,16 +130,6 @@ int main(void)
   TouchSense_Set_Configuration(500,500);
 
   MX_RTC_Init();
-  sdate.Year = 18;
-  sdate.Month = 4;
-  sdate.Date = 7;
-  sdate.WeekDay = RTC_WEEKDAY_SATURDAY;
-
-  stime.Hours = 10;
-  stime.Minutes = 55;
-  stime.Seconds = 00;
-
-  // RTC_Set_Calendar(&hrtc,&sdate,&stime);
   
   MX_TIM1_Init();
   if(HAL_TIM_Base_Start_IT(&htim1) != HAL_OK)
@@ -165,15 +155,15 @@ int main(void)
     }
     pre_count = TIM1_Counter;
 
-    t1 = TouchSense_Get_TouchTime(0);
-    t2 = TouchSense_Get_TouchTime(1);
+  //   t1 = TouchSense_Get_TouchTime(0);
+  //   t2 = TouchSense_Get_TouchTime(1);
 
-    if(t1>10)
-      xprintf("ch1 %d",t1);
-    if(t2>10)
-      xprintf("ch2 %d",t2);
-  //  TouchSence_Display_Value();    
-    xStream_fflush();
+  //   if(t1>10)
+  //     xprintf("ch1 %d",t1);
+  //   if(t2>10)
+  //     xprintf("ch2 %d",t2);
+  // //  TouchSence_Display_Value();    
+  //   xStream_fflush();
   }
 }
 

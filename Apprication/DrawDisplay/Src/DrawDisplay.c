@@ -8,70 +8,75 @@ static uint16_t ProcessCount_Envir = PROCESSTIME_ENVIR-1;
 static uint8_t PreviousDate;
 static uint8_t PreviousSeconds;
 static uint8_t PreviousMinutes;
+static uint8_t PreviousHours;
+
+static const char* MonthStr[]={
+  "Jan.","Feb.","Mar.","Apr.","May","June","July","Aug.","Sep.","Oct.","Nov.","Dec.",
+};
 
 static const float AnalogXY[] = 
 {
- 0.000, -1.000,
- 0.105, -0.995,
- 0.208, -0.978,
- 0.309, -0.951,
- 0.407, -0.914,
- 0.500, -0.866,
- 0.588, -0.809,
- 0.669, -0.743,
- 0.743, -0.669,
- 0.809, -0.588,
- 0.866, -0.500,
- 0.914, -0.407,
- 0.951, -0.309,
- 0.978, -0.208,
- 0.995, -0.105,
- 1.000,  0.000,
- 0.995,  0.105,
- 0.978,  0.208,
- 0.951,  0.309,
- 0.914,  0.407,
- 0.866,  0.500,
- 0.809,  0.588,
- 0.743,  0.669,
- 0.669,  0.743,
- 0.588,  0.809,
- 0.500,  0.866,
- 0.407,  0.914,
- 0.309,  0.951,
- 0.208,  0.978,
- 0.105,  0.995,
- 0.000,  1.000,
--0.105,  0.995,
--0.208,  0.978,
--0.309,  0.951,
--0.407,  0.914,
--0.500,  0.866,
--0.588,  0.809,
--0.669,  0.743,
--0.743,  0.669,
--0.809,  0.588,
--0.866,  0.500,
--0.914,  0.407,
--0.951,  0.309,
--0.978,  0.208,
--0.995,  0.105,
--1.000,  0.000,
--0.995, -0.105,
--0.978, -0.208,
--0.951, -0.309,
--0.914, -0.407,
--0.866, -0.500,
--0.809, -0.588,
--0.743, -0.669,
--0.669, -0.743,
--0.588, -0.809,
--0.500, -0.866,
--0.407, -0.914,
--0.309, -0.951,
--0.208, -0.978,
--0.105, -0.995,
- 
+0.00000,-1.00000,
+ 0.10453,-0.99452,
+ 0.20791,-0.97815,
+ 0.30902,-0.95106,
+ 0.40674,-0.91355,
+ 0.50000,-0.86603,
+ 0.58779,-0.80902,
+ 0.66913,-0.74314,
+ 0.74314,-0.66913,
+ 0.80902,-0.58779,
+ 0.86603,-0.50000,
+ 0.91355,-0.40674,
+ 0.95106,-0.30902,
+ 0.97815,-0.20791,
+ 0.99452,-0.10453,
+ 1.00000,-0.00000,
+ 0.99452, 0.10453,
+ 0.97815, 0.20791,
+ 0.95106, 0.30902,
+ 0.91355, 0.40674,
+ 0.86603, 0.50000,
+ 0.80902, 0.58779,
+ 0.74314, 0.66913,
+ 0.66913, 0.74314,
+ 0.58779, 0.80902,
+ 0.50000, 0.86603,
+ 0.40674, 0.91355,
+ 0.30902, 0.95106,
+ 0.20791, 0.97815,
+ 0.10453, 0.99452,
+ 0.00000, 1.00000,
+-0.10453, 0.99452,
+-0.20791, 0.97815,
+-0.30902, 0.95106,
+-0.40674, 0.91355,
+-0.50000, 0.86603,
+-0.58779, 0.80902,
+-0.66913, 0.74314,
+-0.74314, 0.66913,
+-0.80902, 0.58779,
+-0.86603, 0.50000,
+-0.91355, 0.40674,
+-0.95106, 0.30902,
+-0.97815, 0.20791,
+-0.99452, 0.10453,
+-1.00000, 0.00000,
+-0.99452,-0.10453,
+-0.97815,-0.20791,
+-0.95106,-0.30902,
+-0.91355,-0.40674,
+-0.86603,-0.50000,
+-0.80902,-0.58779,
+-0.74314,-0.66913,
+-0.66913,-0.74314,
+-0.58779,-0.80902,
+-0.50000,-0.86603,
+-0.40674,-0.91355,
+-0.30902,-0.95106,
+-0.20791,-0.97815,
+-0.10453,-0.99452,
+ 0.00000,-1.00000
 };
 
 RTC_HandleTypeDef hrtc;
@@ -99,63 +104,65 @@ void Display_Set_BackColor(uint16_t color)
   BackColor = color;
 }
 
-void Display_DigitalClock(void)
+#define _swap_int16_t(a, b) { int16_t t = a; a = b; b = t; }
+
+void Display_DrawHand(int16_t x0, int16_t y0, int16_t x1, int16_t y1,uint16_t thickness,uint16_t color) 
 {
-  float temp,humid;
-
-  RTC_Get_Calendar(&hrtc,&sdate,&stime);
-
-  if(sdate.Date!=PreviousDate)
+  int16_t steep = abs(y1 - y0) > abs(x1 - x0);
+  if (steep) 
   {
-    PreviousDate = sdate.Date;
-
-    Display_DrawString(CLCOKDATE_X,CLCOKDATE_Y,ILI9325_Color565(0,188,212),2,"%4d-%02d-%02d[%s] ",2000 + sdate.Year,sdate.Month,sdate.Date,RTC_Get_WeekDay_Char(&sdate));
+    _swap_int16_t(x0, y0);
+    _swap_int16_t(x1, y1);
   }
 
-  if(stime.Minutes!=PreviousMinutes)
+  if (x0 > x1) 
   {
-    PreviousMinutes = stime.Minutes;
-
-    Display_DrawString(CLCOKMAIN_X,CLCOKMAIN_Y,ILI9325_Color565(96,125,139),9,"%2d:%02d",stime.Hours,stime.Minutes);
-  }
-  if(stime.Seconds!=PreviousSeconds)
-  {
-    PreviousSeconds = stime.Seconds;
-    
-    Display_DrawString(CLOCKSECOND_X,CLOCKSECOND_Y,ILI9325_Color565(96,125,139),5,"%02d",stime.Seconds);
+    _swap_int16_t(x0, x1);
+    _swap_int16_t(y0, y1);
   }
 
+  int16_t dx, dy;
+  dx = x1 - x0;
+  dy = abs(y1 - y0);
 
-  if((++ProcessCount_Envir)>PROCESSTIME_ENVIR)
+  int16_t err = dx / 2;
+  int16_t ystep;
+
+  if(y0 < y1) ystep = 1;
+  else         ystep = -1;
+
+  for (; x0<=x1; x0++) 
   {
-    ProcessCount_Envir = 0;
-
-    SHT31_Read_Data();
-
-    temp = SHT31_Get_Temperature();
-    humid = SHT31_Get_Humidity();
-  
-    Display_DrawString(TEMP_X,TEMP_Y,ILI9325_BLUE,3,"%hd.%1d",(int16_t)temp,((uint16_t)(temp*10)%10));
-
-    Display_DrawString(HUMI_X,HUMI_Y,ILI9325_BLUE,3,"%hd.%1d",(int16_t)humid,((uint16_t)(humid*10)%10));
+    if (steep) 
+        ILI9325_FillCircle(y0, x0, thickness,color);
+    else 
+        ILI9325_FillCircle(x0, y0, thickness,color);
+    err -= dy;
+    if (err < 0) 
+    {
+        y0 += ystep;
+        err += dx;
+    }
   }
-
 }
 
-static void Draw_HourHand(uint16_t x,uint16_t y,uint16_t r,uint8_t time,uint16_t color)
+static void Draw_HourHand(uint16_t x,uint16_t y,uint16_t r,uint8_t time,uint8_t thickness,uint16_t color)
 {
   uint16_t x2,y2;
 
   x2 = x+(int16_t)((float)r*AnalogXY[time*2  ]);
   y2 = y+(int16_t)((float)r*AnalogXY[time*2+1]);  
 
-  ILI9325_DrawLine(x,y,x2,y2,color);
-  ILI9325_DrawLine(x-1,y-1,x2-1,y2-1,color);
-  ILI9325_DrawLine(x-2,y-2,x2-2,y2-2,color);
-  ILI9325_DrawLine(x+1,y+1,x2+1,y2+1,color);
-  ILI9325_DrawLine(x+2,y+2,x2+2,y2+2,color);
+  Display_DrawHand(x,y,x2,y2,thickness,color);
+}
+static void Plot_SecondCircle(uint16_t x,uint16_t y,uint8_t r,uint8_t time,uint16_t color)
+{
+  uint16_t x2,y2;
 
-  ILI9325_FillCircle(110,120,2,ILI9325_BLACK);
+  x2 = x+(int16_t)((float)r*AnalogXY[time*2  ]);
+  y2 = y+(int16_t)((float)r*AnalogXY[time*2+1]);  
+  
+  ILI9325_FillCircle(x2, y2, 2,color);
 }
 
 void Display_AnalogClock(void)
@@ -168,18 +175,32 @@ void Display_AnalogClock(void)
   {
     PreviousDate = sdate.Date;
 
-    Display_DrawString(CLCOKDATE_X,CLCOKDATE_Y,ILI9325_Color565(0,188,212),2,"%4d-%02d-%02d[%s] ",2000 + sdate.Year,sdate.Month,sdate.Date,RTC_Get_WeekDay_Char(&sdate));
+    Display_DrawString(90,220,ILI9325_Color565(0,188,212),2,"%4s %d %d",MonthStr[sdate.Month],sdate.Date,2000 + sdate.Year);
   }
+
+  if(stime.Seconds!=PreviousSeconds)
+  { 
+    Plot_SecondCircle(160,105,103,PreviousSeconds,BackColor);
+    
+    Plot_SecondCircle(160,105,103,stime.Seconds,ILI9325_RED);
+
+    PreviousSeconds = stime.Seconds;
+  }
+  
   if(stime.Minutes!=PreviousMinutes)
   { 
-    ILI9325_FillCircle(110,120,120,ILI9325_BLACK);
+    Draw_HourHand(160,105,60,(PreviousHours<13)? PreviousHours*5:PreviousHours*2.5,1,BackColor);
 
-    ILI9325_FillCircle(110,120,115,BackColor);
+    Draw_HourHand(160,105,100,PreviousMinutes,1,BackColor);
 
-    Draw_HourHand(110,120,60,(stime.Hours<13)? stime.Hours*5:stime.Hours*2.5,ILI9325_GREEN);
-
+    PreviousHours = stime.Hours;
     PreviousMinutes = stime.Minutes;
-    Draw_HourHand(110,120,115,stime.Minutes,ILI9325_BLUE);
+
+    Display_DrawString(185,102,ILI9325_Color565(0,188,212),1,"%s ",RTC_Get_WeekDay_Char(&sdate));
+
+    Draw_HourHand(160,105,60,(stime.Hours<13)? stime.Hours*5:stime.Hours*2.5,1,ILI9325_GREEN);
+
+    Draw_HourHand(160,105,100,stime.Minutes,1,ILI9325_BLUE);
   }
 
   if((++ProcessCount_Envir)>PROCESSTIME_ENVIR)
@@ -191,9 +212,12 @@ void Display_AnalogClock(void)
     temp = SHT31_Get_Temperature();
     humid = SHT31_Get_Humidity();
     
-    Display_DrawString(TEMP_X,TEMP_Y,ILI9325_BLUE,3,"%hd.%1d",(int16_t)temp,((uint16_t)(temp*10)%10));
-
-    Display_DrawString(HUMI_X,HUMI_Y,ILI9325_BLUE,3,"%hd.%1d",(int16_t)humid,((uint16_t)(humid*10)%10));
+    Display_DrawString(20,186,ILI9325_BLUE,4,"%2hd",(uint16_t)temp);
+    ILI9325_DrawCircle(72,202,2,ILI9325_BLUE);
+    Display_DrawString(76,200,ILI9325_BLUE,2,"C");
+  
+    Display_DrawString(238,186,ILI9325_BLUE,4,"%2hd",(uint16_t)humid);
+    Display_DrawString(294,200,ILI9325_BLUE,2,"%%");
   }
 
 }

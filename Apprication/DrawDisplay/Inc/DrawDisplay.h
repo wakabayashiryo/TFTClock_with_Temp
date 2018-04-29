@@ -43,18 +43,6 @@
 
 #define PROCESSTIME_ENVIR 30000 //ms
 
-#define CLCOKMAIN_X     0
-#define CLCOKMAIN_Y     73
-#define CLOCKSECOND_X   (CLCOKMAIN_X+268)
-#define CLOCKSECOND_Y   (CLCOKMAIN_Y+36)
-
-#define CLCOKDATE_X      30
-#define CLCOKDATE_Y      30
-
-#define TEMP_X           36
-#define TEMP_Y           200         
-#define HUMI_X           196
-#define HUMI_Y           200
 
 /* USER CODE BEGIN Includes */
 
