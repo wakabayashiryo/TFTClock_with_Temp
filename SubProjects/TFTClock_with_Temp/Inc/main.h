@@ -49,6 +49,8 @@
 
 #define B1_Pin GPIO_PIN_13
 #define B1_GPIO_Port GPIOC
+#define BackLight_Pin GPIO_PIN_0
+#define BackLight_GPIO_Port GPIOC
 #define LCD_RST_Pin GPIO_PIN_1
 #define LCD_RST_GPIO_Port GPIOC
 #define LCD_RD_Pin GPIO_PIN_0

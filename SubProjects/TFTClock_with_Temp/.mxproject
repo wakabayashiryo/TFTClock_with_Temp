@@ -1,7 +1,7 @@
 [PreviousGenFiles]
-HeaderPath=/home/evaota/TFTClock_with_Temp/STM32Cube/TFTClock_with_Temp/Inc
+HeaderPath=/home/evaota/TFTClock_with_Temp/SubProjects/TFTClock_with_Temp/Inc
 HeaderFiles=stm32f4xx_it.h;stm32f4xx_hal_conf.h;main.h;
-SourcePath=/home/evaota/TFTClock_with_Temp/STM32Cube/TFTClock_with_Temp/Src
+SourcePath=/home/evaota/TFTClock_with_Temp/SubProjects/TFTClock_with_Temp/Src
 SourceFiles=stm32f4xx_it.h;stm32f4xx_hal_conf.h;main.h;stm32f4xx_it.c;stm32f4xx_hal_msp.c;main.c;
 
 [PreviousLibFiles]

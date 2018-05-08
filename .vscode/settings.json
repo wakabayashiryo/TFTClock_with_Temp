@@ -17,6 +17,7 @@
         "drawdisplay.h": "c",
         "stm32f4xx.h": "c",
         "stm32f4xx_it.h": "c",
-        "sht31.h": "c"
+        "sht31.h": "c",
+        "touchsense.h": "c"
     }
 }

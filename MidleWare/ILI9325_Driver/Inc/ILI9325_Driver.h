@@ -205,6 +205,8 @@ void ILI9325_WriteLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1,uint16_t c
 void ILI9325_DrawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1,uint16_t color);
 // Draw a circle outline
 void ILI9325_DrawCircle(int16_t x0, int16_t y0, int16_t r,uint16_t color);
+
+void ILI9325_FillCircle(int16_t x0, int16_t y0, int16_t r,uint16_t color);
 //------------ILI9325_Color565------------
 // Pass 8-bit (each) R,G,B and get back 16-bit packed color.
 // Input: r red value

@@ -40,7 +40,7 @@
 #include "stm32f4xx_hal.h"
 
 /* USER CODE BEGIN Includes */
-
+uint32_t TIM1_Counter;
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -51,10 +51,6 @@ DMA_HandleTypeDef hdma_i2c1_tx;
 extern RTC_HandleTypeDef hrtc;
 extern RTC_TimeTypeDef stime;
 extern RTC_DateTypeDef sdate;
-
-SPI_HandleTypeDef hspi1;
-DMA_HandleTypeDef hdma_spi1_rx;
-DMA_HandleTypeDef hdma_spi1_tx;
 
 TIM_HandleTypeDef htim1;
 TIM_HandleTypeDef htim2;
@@ -72,7 +68,6 @@ DMA_HandleTypeDef hdma_usart2_tx;
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_DMA_Init(void);
-static void MX_SPI1_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_RTC_Init(void);
@@ -115,56 +110,44 @@ int main(void)
   MX_GPIO_Init();
   
   MX_DMA_Init();
-    
-  ILI9325_Init();
-  ILI9325_FillScreen(ILI9325_Color565(255,255,255));
-  ILI9325_SetRotation(3);
-  Display_Set_BackColor(ILI9325_Color565(255,255,255));
 
-// MX_SPI1_Init();
+  ILI9325_Init();
+  ILI9325_FillScreen(ILI9325_WHITE);
+  ILI9325_SetRotation(3);
+  Display_Set_BackColor(ILI9325_WHITE);
+
+  Display_Set_Blightless(3);    
   
   MX_USART2_UART_Init();
-  uint8_t stream_buff[1000];
+  uint8_t stream_buff[1000]={0};
   xStream_Setbuf(stream_buff,sizeof(stream_buff));
 
   MX_I2C1_Init();
-  SHT31_Init();
-  TouchSense_Set_Configuration(1000,1000,100);
 
+  SHT31_Init();
   SHT31_Read_Data();
 
+  TouchSense_Set_Configuration(500,500);
+
   MX_RTC_Init();
-  sdate.Year = 18;
-  sdate.Month = 1;
-  sdate.Date = 5;
-  sdate.WeekDay = RTC_WEEKDAY_THURSDAY;
-
-  stime.Hours = 0;
-  stime.Minutes = 46;
-  stime.Seconds = 00;
-
-  // RTC_Set_Calendar(&hrtc,&sdate,&stime);
   
   MX_TIM1_Init();
   if(HAL_TIM_Base_Start_IT(&htim1) != HAL_OK)
-  {
-    /* Starting Error */
     Error_Handler();
-  }
 
   MX_TIM2_Init();
   Buzzer_Start();
+  Buzzer_Set_Frequency(1000);
 
   /* USER CODE BEGIN 2 */
-
+  uint32_t pre_count;
+  uint16_t t1,t2;
   /* USER CODE END 2 */
-  float temp,humid;
-  char stri[50];
   
-
-  /* Infinite loop */
+  // /* Infinite loop */
   while (1)
   {
+<<<<<<< HEAD
 
     SHT31_Read_Data();
     temp = SHT31_Get_Temperature();
@@ -176,8 +159,35 @@ int main(void)
     // RTC_Show_Calendar(&hrtc,&sdate,&stime);
 
      xStream_fflush();
-  }
+=======
+    if(pre_count!=TIM1_Counter)
+    {
+      TouchSense_Count_Touching();
+      // Display_DigitalClock();
+      Display_AnalogClock(); 
+    }
+    pre_count = TIM1_Counter;
 
+  //   t1 = TouchSense_Get_TouchTime(0);
+  //   t2 = TouchSense_Get_TouchTime(1);
+
+  //   if(t1>10)
+  //     xprintf("ch1 %d",t1);
+  //   if(t2>10)
+  //     xprintf("ch2 %d",t2);
+  // //  TouchSence_Display_Value();    
+  //   xStream_fflush();
+>>>>>>> AnalogClock
+  }
+}
+
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+  UNUSED(htim);
+
+  TIM1_Counter++;
+  
+  Display_Process_BackLight();  
 }
 
 /** System Clock Configuration
@@ -312,30 +322,6 @@ static void MX_RTC_Init(void)
 
 }
 
-/* SPI1 init function */
-static void MX_SPI1_Init(void)
-{
-
-  /* SPI1 parameter configuration*/
-  hspi1.Instance = SPI1;
-  hspi1.Init.Mode = SPI_MODE_MASTER;
-  hspi1.Init.Direction = SPI_DIRECTION_2LINES;
-  hspi1.Init.DataSize = SPI_DATASIZE_8BIT;
-  hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
-  hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
-  hspi1.Init.NSS = SPI_NSS_SOFT;
-  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
-  hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
-  hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
-  hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
-  hspi1.Init.CRCPolynomial = 10;
-  if (HAL_SPI_Init(&hspi1) != HAL_OK)
-  {
-    _Error_Handler(__FILE__, __LINE__);
-  }
-
-}
-
 /* TIM1 init function */
 static void MX_TIM1_Init(void)
 {
@@ -344,7 +330,7 @@ static void MX_TIM1_Init(void)
   TIM_MasterConfigTypeDef sMasterConfig;
 
   htim1.Instance = TIM1;
-  htim1.Init.Prescaler = 84;
+  htim1.Init.Prescaler = 84-1;
   htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim1.Init.Period = 1000;
   htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
@@ -447,7 +433,7 @@ static void MX_DMA_Init(void)
 
   /* DMA interrupt init */
   /* DMA1_Stream0_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(DMA1_Stream0_IRQn, 0, 0);
+  HAL_NVIC_SetPriority(DMA1_Stream0_IRQn, 0, 1);
   HAL_NVIC_EnableIRQ(DMA1_Stream0_IRQn);
   /* DMA1_Stream6_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(DMA1_Stream6_IRQn, 0, 0);
@@ -483,7 +469,7 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOC, LCD_RST_Pin|LCD_D1_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOC, BackLight_Pin|LCD_RST_Pin|LCD_D1_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOA, LCD_RD_Pin|LCD_WR_Pin|LCD_RS_Pin|LCD_D7_Pin 
@@ -499,8 +485,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(B1_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : LCD_RST_Pin LCD_D1_Pin */
-  GPIO_InitStruct.Pin = LCD_RST_Pin|LCD_D1_Pin;
+  /*Configure GPIO pins : BackLight_Pin LCD_RST_Pin LCD_D1_Pin */
+  GPIO_InitStruct.Pin = BackLight_Pin|LCD_RST_Pin|LCD_D1_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;

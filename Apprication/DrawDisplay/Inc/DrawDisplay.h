@@ -43,22 +43,18 @@
 
 #define PROCESSTIME_ENVIR 30000 //ms
 
-#define CLCOKMAIN_X     0
-#define CLCOKMAIN_Y     73
-#define CLOCKSECOND_X   (CLCOKMAIN_X+268)
-#define CLOCKSECOND_Y   (CLCOKMAIN_Y+36)
-
-#define CLCOKDATE_X      30
-#define CLCOKDATE_Y      30
-
-#define TEMP_X           36
-#define TEMP_Y           200         
-#define HUMI_X           196
-#define HUMI_Y           200
 
 /* USER CODE BEGIN Includes */
+
+#define Display_Set_BackLight()   GPIOC->ODR &= ~(1<<0)
+#define Display_Reset_BackLight() GPIOC->ODR |=  (1<<0)
+
 void Display_Set_BackColor(uint16_t color);
 void Display_DigitalClock(void);
+void Display_AnalogClock(void);
+
+void Display_Set_Blightless(uint8_t Blight);
+void Display_Process_BackLight(void);
 /* USER CODE END Includes */
 
 /* Private define ------------------------------------------------------------*/
