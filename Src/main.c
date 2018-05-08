@@ -41,6 +41,8 @@
 
 /* USER CODE BEGIN Includes */
 uint32_t TIM1_Counter;
+uint32_t buzzer_counter;
+uint32_t ScreenSaver;
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -138,7 +140,7 @@ int main(void)
 
   MX_TIM2_Init();
   Buzzer_Start();
-  Buzzer_Set_Frequency(1000);
+  Buzzer_Set_Frequency(4400);
 
   /* USER CODE BEGIN 2 */
   uint32_t pre_count;
@@ -157,15 +159,15 @@ int main(void)
     }
     pre_count = TIM1_Counter;
 
-  //   t1 = TouchSense_Get_TouchTime(0);
-  //   t2 = TouchSense_Get_TouchTime(1);
+    t1 = TouchSense_Get_TouchTime(0);
+    t2 = TouchSense_Get_TouchTime(1);
 
-  //   if(t1>10)
-  //     xprintf("ch1 %d",t1);
-  //   if(t2>10)
-  //     xprintf("ch2 %d",t2);
-  // //  TouchSence_Display_Value();    
-  //   xStream_fflush();
+    if(t1>10)
+      buzzer_counter = 70;
+    if(t2>10)
+      buzzer_counter = 70;
+
+    // xStream_fflush();
   }
 }
 
@@ -174,7 +176,16 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   UNUSED(htim);
 
   TIM1_Counter++;
-  
+
+  if(buzzer_counter) 
+  {
+    buzzer_counter--;
+    Buzzer_ON();
+  }
+  else 
+  { 
+    Buzzer_OFF();
+  } 
   Display_Process_BackLight();  
 }
 
