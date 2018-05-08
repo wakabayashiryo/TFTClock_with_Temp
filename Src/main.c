@@ -116,8 +116,8 @@ int main(void)
   ILI9325_SetRotation(3);
   Display_Set_BackColor(ILI9325_WHITE);
 
-  Display_Set_Blightless(3);    
-  
+  Display_Set_Blightless(7);    
+
   MX_USART2_UART_Init();
   uint8_t stream_buff[1000]={0};
   xStream_Setbuf(stream_buff,sizeof(stream_buff));
@@ -125,6 +125,7 @@ int main(void)
   MX_I2C1_Init();
 
   SHT31_Init();
+  HAL_Delay(10);
   SHT31_Read_Data();
 
   TouchSense_Set_Configuration(500,500);
@@ -144,27 +145,15 @@ int main(void)
   uint16_t t1,t2;
   /* USER CODE END 2 */
   
-  // /* Infinite loop */
+   /* Infinite loop */
   while (1)
   {
-<<<<<<< HEAD
-
-    SHT31_Read_Data();
-    temp = SHT31_Get_Temperature();
-    humid = SHT31_Get_Humidity();
-    
-    xprintf("%d.%1d %d.%1d\n",(int16_t)temp,((int16_t)(temp*10)%10),(int16_t)humid,((int16_t)(humid*10)%10));
-   
-    // RTC_Get_Calendar(&hrtc,&sdate,&stime);
-    // RTC_Show_Calendar(&hrtc,&sdate,&stime);
-
-     xStream_fflush();
-=======
     if(pre_count!=TIM1_Counter)
     {
       TouchSense_Count_Touching();
-      // Display_DigitalClock();
+
       Display_AnalogClock(); 
+      // Display_DigitalClock();
     }
     pre_count = TIM1_Counter;
 
@@ -177,7 +166,6 @@ int main(void)
   //     xprintf("ch2 %d",t2);
   // //  TouchSence_Display_Value();    
   //   xStream_fflush();
->>>>>>> AnalogClock
   }
 }
 

@@ -10,13 +10,9 @@ static uint8_t PreviousSeconds;
 static uint8_t PreviousMinutes;
 static uint8_t PreviousHours;
 
-static const char* MonthStr[]={
-  "Jan.","Feb.","Mar.","Apr.","May","June","July","Aug.","Sep.","Oct.","Nov.","Dec.",
-};
-
 static const float AnalogXY[] = 
 {
-0.00000,-1.00000,
+ 0.00000,-1.00000,
  0.10453,-0.99452,
  0.20791,-0.97815,
  0.30902,-0.95106,
@@ -82,6 +78,10 @@ static const float AnalogXY[] =
 RTC_HandleTypeDef hrtc;
 RTC_TimeTypeDef stime;
 RTC_DateTypeDef sdate;
+
+static const char* MonthStr[]={
+  "Jan.","Feb.","Mar.","Apr.","May","June","July","Aug.","Sep.","Oct.","Nov.","Dec.",
+};
 
 void Display_DrawString(uint16_t x,uint16_t y,uint16_t color,uint16_t size,const char *args, ...)
 {
@@ -209,22 +209,8 @@ void Display_AnalogClock(void)
 
     SHT31_Read_Data();
 
-<<<<<<< HEAD
-//     temp = SHT31_Get_Temperature();
-//     humid = SHT31_Get_Humidity();
-  
-//     sprintf(TempString,"%hd.%1d",(int16_t)temp,((uint16_t)(temp*10)%10));
-//     Clear_StringSpvoid Display_DigitalClock(void)
-// {ace(TEMP_X,TEMP_Y,(int8_t *)TempString,3);
-//     ILI9325_DrawString(TEMP_X,TEMP_Y,(int8_t *)TempString,ILI9325_BLUE,3);
-
-//     sprintf(HumidString,"%hd.%1d",(int16_t)humid,((uint16_t)(humid*10)%10));
-//     Clear_StringSpace(HUMI_X,HUMI_Y,(int8_t *)HumidString,3);
-//     ILI9325_DrawString(HUMI_X,HUMI_Y,(int8_t *)HumidString,ILI9325_BLUE,3);
-=======
     temp = SHT31_Get_Temperature();
     humid = SHT31_Get_Humidity();
->>>>>>> AnalogClock
     
     Display_DrawString(20,186,ILI9325_BLUE,4,"%2hd",(uint16_t)temp);
     ILI9325_DrawCircle(72,202,2,ILI9325_BLUE);
@@ -232,6 +218,56 @@ void Display_AnalogClock(void)
   
     Display_DrawString(238,186,ILI9325_BLUE,4,"%2hd",(uint16_t)humid);
     Display_DrawString(294,200,ILI9325_BLUE,2,"%%");
+  }
+
+}
+
+void Display_DigitalClock(void)
+{
+  float temp,humid;
+
+  RTC_Get_Calendar(&hrtc,&sdate,&stime);
+
+  if(sdate.Date!=PreviousDate)
+  {
+    PreviousDate = sdate.Date;
+
+    Display_DrawString(50,200,ILI9325_Color565(0,188,212),2,"%s ",RTC_Get_WeekDay_Char(&sdate));
+    Display_DrawString(180,90,ILI9325_Color565(0,188,212),3,"%-4s%02d",MonthStr[sdate.Month],sdate.Date);
+    Display_DrawString(187,37,ILI9325_Color565(0,188,212),4,"%4d",2000+sdate.Year);
+  }
+
+  if(stime.Minutes!=PreviousMinutes)
+  {
+    PreviousMinutes = stime.Minutes;
+
+    Display_DrawString(35,37,ILI9325_Color565(96,125,139),8,"%2d",stime.Hours);
+    Display_DrawString(35,117,ILI9325_Color565(96,125,139),8,"%02d",stime.Minutes);
+  }
+
+  if(stime.Seconds!=PreviousSeconds)
+  {
+    PreviousSeconds = stime.Seconds;
+    
+    Display_DrawString(131,145,ILI9325_Color565(96,125,139),4,"%02d",stime.Seconds);
+  }
+
+
+  if((++ProcessCount_Envir)>PROCESSTIME_ENVIR)
+  {
+    ProcessCount_Envir = 0;
+
+    SHT31_Read_Data();
+
+    temp = SHT31_Get_Temperature();
+    humid = SHT31_Get_Humidity();
+
+    Display_DrawString(213,153,ILI9325_BLUE,4,"%2hd",(uint16_t)temp);
+    ILI9325_DrawCircle(265,169,2,ILI9325_BLUE);
+    Display_DrawString(269,167,ILI9325_BLUE,2,"C");
+  
+    Display_DrawString(213,186,ILI9325_BLUE,4,"%2hd",(uint16_t)humid);
+    Display_DrawString(269,200,ILI9325_BLUE,2,"%%");
   }
 
 }
