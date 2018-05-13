@@ -10,6 +10,16 @@ static uint8_t PreviousSeconds;
 static uint8_t PreviousMinutes;
 static uint8_t PreviousHours;
 
+<<<<<<< HEAD
+=======
+static const char* MonthStr[]={
+  "Jan.","Feb.","Mar.","Apr.","May","June","July","Aug.","Sep.","Oct.","Nov.","Dec.",
+};
+static const char* DateStr[]={
+  "Mon.","Tue.","Wed.","Thu.","Fri.","Sat.","Sun.",
+};
+
+>>>>>>> AnalogClock
 static const float AnalogXY[] = 
 {
  0.00000,-1.00000,
@@ -196,7 +206,7 @@ void Display_AnalogClock(void)
     PreviousHours = stime.Hours;
     PreviousMinutes = stime.Minutes;
 
-    Display_DrawString(185,102,ILI9325_Color565(0,188,212),1,"%s ",RTC_Get_WeekDay_Char(&sdate));
+    Display_DrawString(190,102,ILI9325_Color565(0,188,212),2,"%s ",DateStr[sdate.WeekDay-1]);
 
     Draw_HourHand(160,105,60,(stime.Hours<13)? stime.Hours*5:stime.Hours*2.5,1,ILI9325_GREEN);
 
