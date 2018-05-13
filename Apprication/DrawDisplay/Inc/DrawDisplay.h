@@ -49,7 +49,9 @@
 #define Display_Set_BackLight()   GPIOC->ODR &= ~(1<<0)
 #define Display_Reset_BackLight() GPIOC->ODR |=  (1<<0)
 
+void Display_Reset_PreviousDatas(void);
 void Display_Set_BackColor(uint16_t color);
+
 void Display_DigitalClock(void);
 void Display_AnalogClock(void);
 

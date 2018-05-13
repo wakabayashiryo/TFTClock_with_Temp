@@ -107,6 +107,15 @@ void Display_Set_BackColor(uint16_t color)
   BackColor = color;
 }
 
+void Display_Reset_PreviousDatas(void)
+{
+  PreviousDate = 0;
+  PreviousSeconds = 0;
+  PreviousMinutes = 0;
+  PreviousHours = 0;
+  ProcessCount_Envir = PROCESSTIME_ENVIR-1;
+}
+
 #define _swap_int16_t(a, b) { int16_t t = a; a = b; b = t; }
 
 void Display_DrawHand(int16_t x0, int16_t y0, int16_t x1, int16_t y1,uint16_t thickness,uint16_t color) 
@@ -158,6 +167,7 @@ static void Draw_HourHand(uint16_t x,uint16_t y,uint16_t r,uint8_t time,uint8_t 
 
   Display_DrawHand(x,y,x2,y2,thickness,color);
 }
+
 static void Plot_SecondCircle(uint16_t x,uint16_t y,uint8_t r,uint8_t time,uint16_t color)
 {
   uint16_t x2,y2;

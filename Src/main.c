@@ -144,6 +144,7 @@ int main(void)
 
   /* USER CODE BEGIN 2 */
   uint32_t pre_count;
+  uint8_t state=0;
   uint16_t t1,t2;
   /* USER CODE END 2 */
   
@@ -153,9 +154,14 @@ int main(void)
     if(pre_count!=TIM1_Counter)
     {
       TouchSense_Count_Touching();
-
-      Display_AnalogClock(); 
-      // Display_DigitalClock();
+      if(state==0)
+      {
+        Display_AnalogClock(); 
+      } 
+      if(state==1)
+      {
+        Display_DigitalClock();
+      }
     }
     pre_count = TIM1_Counter;
 
@@ -163,7 +169,16 @@ int main(void)
     t2 = TouchSense_Get_TouchTime(1);
 
     if(t1>10)
+    {
+      ILI9325_FillScreen(ILI9325_WHITE);
+      Display_Reset_PreviousDatas();
       buzzer_counter = 70;
+      if(state==0)
+        state = 1;
+      else
+        state = 0;
+
+    }     
     if(t2>10)
       buzzer_counter = 70;
 
