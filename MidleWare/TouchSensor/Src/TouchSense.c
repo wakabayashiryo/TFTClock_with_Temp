@@ -104,6 +104,13 @@ void TouchSense_Count_Touching(void)
     }
 }
 
+uint16_t TouchSense_Get_Count(uint8_t ch)
+{
+    if(ch>1)return 0;
+    
+    return sval[ch].TouchCount_ms;
+}
+
 uint16_t TouchSense_Get_TouchTime(uint8_t ch)
 {
     if(ch>1)return 0;

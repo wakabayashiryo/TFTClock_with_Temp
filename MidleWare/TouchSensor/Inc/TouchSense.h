@@ -31,8 +31,12 @@ typedef struct
 }SensorValue;
 
 int8_t TouchSense_Set_Configuration(uint16_t th1,uint16_t th2);
+
 void TouchSense_Count_Touching(void);
+
+uint16_t TouchSense_Get_Count(uint8_t ch);
 uint16_t TouchSense_Get_TouchTime(uint8_t ch);
+
 void TouchSence_Display_Value(void);
 
 #ifdef	__cplusplus
