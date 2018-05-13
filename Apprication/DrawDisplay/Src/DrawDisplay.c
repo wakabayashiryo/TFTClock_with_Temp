@@ -10,8 +10,6 @@ static uint8_t PreviousSeconds;
 static uint8_t PreviousMinutes;
 static uint8_t PreviousHours;
 
-<<<<<<< HEAD
-=======
 static const char* MonthStr[]={
   "Jan.","Feb.","Mar.","Apr.","May","June","July","Aug.","Sep.","Oct.","Nov.","Dec.",
 };
@@ -19,7 +17,6 @@ static const char* DateStr[]={
   "Mon.","Tue.","Wed.","Thu.","Fri.","Sat.","Sun.",
 };
 
->>>>>>> AnalogClock
 static const float AnalogXY[] = 
 {
  0.00000,-1.00000,
@@ -88,10 +85,6 @@ static const float AnalogXY[] =
 RTC_HandleTypeDef hrtc;
 RTC_TimeTypeDef stime;
 RTC_DateTypeDef sdate;
-
-static const char* MonthStr[]={
-  "Jan.","Feb.","Mar.","Apr.","May","June","July","Aug.","Sep.","Oct.","Nov.","Dec.",
-};
 
 void Display_DrawString(uint16_t x,uint16_t y,uint16_t color,uint16_t size,const char *args, ...)
 {
