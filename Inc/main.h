@@ -126,14 +126,37 @@ typedef struct
 #define GPIOB_Bits ((volatile GPIOx_Bits *) (&GPIOB->ODR))
 #define GPIOC_Bits ((volatile GPIOx_Bits *) (&GPIOC->ODR))
 
+typedef struct
+{
+  uint8_t state;
+
+  struct
+  {
+    uint8_t saver_switch;
+    float saver_minutes;
+    uint32_t saver_timer;
+    uint8_t blight;
+  }Backlight;
+
+  struct
+  {
+    uint8_t beep_switch;
+    uint32_t beep_timer;
+  }Beep;
+
+  uint16_t touch_time[2];
+}user_config;
+
+#define SOUND_BEEP_ms(t)    uconf.Beep.beep_timer = t 
+#define SCREENSAVER_RESET() uconf.Backlight.saver_timer = uconf.Backlight.saver_minutes*60.0*1000.0
+
 #define SOUND_FREQ 4000
 
 #define PWM_PERIOD (uint32_t)(1000000/SOUND_FREQ)
 
-
-#define Buzzer_Start()          if(HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1) != HAL_OK){Error_Handler();}
-#define Buzzer_ON()             __HAL_TIM_SET_COMPARE(&htim2,TIM_CHANNEL_1,PWM_PERIOD>>1);
-#define Buzzer_OFF()            __HAL_TIM_SET_COMPARE(&htim2,TIM_CHANNEL_1,0);
+#define Buzzer_Start()              if(HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1) != HAL_OK){Error_Handler();}
+#define Buzzer_ON()                 __HAL_TIM_SET_COMPARE(&htim2,TIM_CHANNEL_1,PWM_PERIOD>>1)
+#define Buzzer_OFF()                __HAL_TIM_SET_COMPARE(&htim2,TIM_CHANNEL_1,0)
 #define Buzzer_Set_Frequency(freq)  __HAL_TIM_SET_AUTORELOAD(&htim2, (uint32_t)(1000000/freq))
 
 /* USER CODE END Private defines */

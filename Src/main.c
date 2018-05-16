@@ -41,8 +41,7 @@
 
 /* USER CODE BEGIN Includes */
 uint32_t TIM1_Counter;
-uint32_t buzzer_counter;
-uint32_t ScreenSaver;
+user_config uconf;
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -89,7 +88,12 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-
+  uconf.state = 0;
+  uconf.Beep.beep_switch = 1;
+  uconf.Backlight.saver_switch = 1;
+  uconf.Backlight.blight = 4;
+  uconf.Backlight.saver_minutes = 0.5;
+  SCREENSAVER_RESET();
   /* USER CODE END 1 */
 
   /* MCU Configuration----------------------------------------------------------*/
@@ -118,7 +122,7 @@ int main(void)
   ILI9325_SetRotation(3);
   Display_Set_BackColor(ILI9325_WHITE);
 
-  Display_Set_Blightless(7);    
+  Display_Set_Blightless(uconf.Backlight.blight);    
 
   MX_USART2_UART_Init();
   uint8_t stream_buff[1000]={0};
@@ -139,13 +143,11 @@ int main(void)
     Error_Handler();
 
   MX_TIM2_Init();
-  Buzzer_Start();
   Buzzer_Set_Frequency(4400);
+  Buzzer_Start();
 
   /* USER CODE BEGIN 2 */
   uint32_t pre_count;
-  uint8_t state=0;
-  uint16_t t1,t2;
   /* USER CODE END 2 */
   
    /* Infinite loop */
@@ -154,35 +156,33 @@ int main(void)
     if(pre_count!=TIM1_Counter)
     {
       TouchSense_Count_Touching();
-      if(state==0)
-      {
+      if(uconf.state==0)
         Display_AnalogClock(); 
-      } 
-      if(state==1)
-      {
+      if(uconf.state==1)
         Display_DigitalClock();
-      }
     }
     pre_count = TIM1_Counter;
 
-    t1 = TouchSense_Get_TouchTime(0);
-    t2 = TouchSense_Get_TouchTime(1);
+    uconf.touch_time[0] = TouchSense_Get_TouchTime(0);
+    uconf.touch_time[1] = TouchSense_Get_TouchTime(1);
 
-    if(t1>10)
+    if(uconf.touch_time[0]>10)
     {
       ILI9325_FillScreen(ILI9325_WHITE);
       Display_Reset_PreviousDatas();
-      buzzer_counter = 70;
-      if(state==0)
-        state = 1;
+      SOUND_BEEP_ms(50);
+      SCREENSAVER_RESET();
+
+      if(uconf.state==0)
+        uconf.state = 1;
       else
-        state = 0;
-
+        uconf.state = 0;
     }     
-    if(t2>10)
-      buzzer_counter = 70;
-
-    // xStream_fflush();
+    if(uconf.touch_time[1]>10)
+    {
+      SCREENSAVER_RESET();
+      SOUND_BEEP_ms(50);
+    }
   }
 }
 
@@ -192,15 +192,26 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 
   TIM1_Counter++;
 
-  if(buzzer_counter) 
+  if(uconf.Backlight.saver_switch)
   {
-    buzzer_counter--;
-    Buzzer_ON();
+    if(uconf.Backlight.saver_timer)uconf.Backlight.saver_timer--;
+    
+    if(uconf.Backlight.saver_timer)
+      Display_Set_Blightless(uconf.Backlight.blight);    
+    else
+      Display_Set_Blightless(0);
   }
-  else 
-  { 
-    Buzzer_OFF();
-  } 
+
+  if(uconf.Beep.beep_switch)
+  {
+    if(uconf.Beep.beep_timer)uconf.Beep.beep_timer--;
+
+    if(uconf.Beep.beep_timer) 
+      Buzzer_ON();
+    else 
+      Buzzer_OFF();
+  }
+
   Display_Process_BackLight();  
 }
 
