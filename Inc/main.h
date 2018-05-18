@@ -102,34 +102,21 @@
 #define SD_CS_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
-typedef struct
-{
-  uint32_t P0:1;
-  uint32_t P1:1;
-  uint32_t P2:1;
-  uint32_t P3:1;
-  uint32_t P4:1;
-  uint32_t P5:1;
-  uint32_t P6:1;
-  uint32_t P7:1;
-  uint32_t P8:1;
-  uint32_t P9:1;
-  uint32_t P10:1;
-  uint32_t P11:1;
-  uint32_t P12:1;
-  uint32_t P13:1;
-  uint32_t P14:1;
-  uint32_t P15:1;
-}GPIOx_Bits;
 
-#define GPIOA_Bits ((volatile GPIOx_Bits *) (&GPIOA->ODR))
-#define GPIOB_Bits ((volatile GPIOx_Bits *) (&GPIOB->ODR))
-#define GPIOC_Bits ((volatile GPIOx_Bits *) (&GPIOC->ODR))
+typedef enum
+{
+  SCREEN_SAVER  = 0,
+  DIGITAL_CLOCK = 1,
+  ANALOG_CLOCK  = 2,
+  SETTING       = 3,
+  ADJ_TIME      = 4,
+}Operational_States;
 
 typedef struct
 {
-  uint8_t state;
-
+  Operational_States state;
+  Operational_States state_temp;
+  
   struct
   {
     uint8_t saver_switch;
@@ -143,9 +130,9 @@ typedef struct
     uint8_t beep_switch;
     uint32_t beep_timer;
   }Beep;
-
-  uint16_t touch_time[2];
 }user_config;
+
+#define _DETECT_TOUCH 10
 
 #define SOUND_BEEP_ms(t)    uconf.Beep.beep_timer = t 
 #define SCREENSAVER_RESET() uconf.Backlight.saver_timer = uconf.Backlight.saver_minutes*60.0*1000.0
