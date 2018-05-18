@@ -284,12 +284,11 @@ void Display_DigitalClock(void)
   }
 
 }
-
-void Display_Adjust_Time(void)
+ 
+void Display_Adjust_Time(AdjustTime_States *stat)
 {
   static RTC_TimeTypeDef stime_temp;
   static RTC_DateTypeDef sdate_temp;
-  static uint8_t figure_pos = 0;
 
   Display_DrawString(187,37,ILI9325_Color565(0,188,212),4,"%4d",2000+sdate.Year);
   Display_DrawString(180,90,ILI9325_Color565(0,188,212),3,"%-4s%02d",MonthStr[sdate.Month],sdate.Date);

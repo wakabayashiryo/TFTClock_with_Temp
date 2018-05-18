@@ -89,6 +89,8 @@ user_config uconf = {
   .Backlight.blight = 4,
   .Backlight.saver_minutes = 0.5,
 };
+AdjustTime_States adjt = {
+};
 /* USER CODE END 0 */
 
 int main(void)

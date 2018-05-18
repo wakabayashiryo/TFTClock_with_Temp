@@ -114,6 +114,17 @@ typedef enum
 
 typedef struct
 {
+  uint8_t figure_pos;
+  enum
+  {
+    READ_TIME = 0,
+    ADJUSTING = 1,
+    DETERMINE_TIME = 2,,
+  };
+}AdjustTime_States;
+
+typedef struct
+{
   Operational_States state;
   Operational_States state_temp;
   
