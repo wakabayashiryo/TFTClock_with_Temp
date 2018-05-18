@@ -285,6 +285,21 @@ void Display_DigitalClock(void)
 
 }
 
+void Display_Adjust_Time(void)
+{
+  static RTC_TimeTypeDef stime_temp;
+  static RTC_DateTypeDef sdate_temp;
+  static uint8_t figure_pos = 0;
+
+  Display_DrawString(187,37,ILI9325_Color565(0,188,212),4,"%4d",2000+sdate.Year);
+  Display_DrawString(180,90,ILI9325_Color565(0,188,212),3,"%-4s%02d",MonthStr[sdate.Month],sdate.Date);
+  Display_DrawString(50,200,ILI9325_Color565(0,188,212),2,"%s ",RTC_Get_WeekDay_Char(&sdate));
+
+  Display_DrawString(35,37,ILI9325_Color565(96,125,139),8,"%2d",stime.Hours);
+  Display_DrawString(35,117,ILI9325_Color565(96,125,139),8,"%02d",stime.Minutes);
+}
+
+
 static uint8_t BackLight_Blight = 0; 
 
 void Display_Set_Blightless(uint8_t Blight)
