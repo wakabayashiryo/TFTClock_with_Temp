@@ -40,8 +40,6 @@
 #include "stm32f4xx_hal.h"
 
 /* USER CODE BEGIN Includes */
-uint32_t TIM1_Counter;
-user_config uconf;
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -77,23 +75,26 @@ static void MX_TIM2_Init(void);
 
 void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
 
+void Process_for_Touch(Operational_Sstaes *stat);
+void Process_for_states(Operational_Sstaes *stat);
 /* USER CODE BEGIN PFP */
 /* USER CODE END PFP */
 
 /* USER CODE BEGIN 0 */
-
+uint32_t TIM1_Counter;
+user_config uconf = {
+  .state = DIGITAL_CLOCK,
+  .Beep.beep_switch = 1,
+  .Backlight.saver_switch = 1,
+  .Backlight.blight = 4,
+  .Backlight.saver_minutes = 0.5,
+};
 /* USER CODE END 0 */
 
 int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-  uconf.state = 0;
-  uconf.Beep.beep_switch = 1;
-  uconf.Backlight.saver_switch = 1;
-  uconf.Backlight.blight = 4;
-  uconf.Backlight.saver_minutes = 0.5;
-  SCREENSAVER_RESET();
   /* USER CODE END 1 */
 
   /* MCU Configuration----------------------------------------------------------*/
@@ -123,6 +124,7 @@ int main(void)
   Display_Set_BackColor(ILI9325_WHITE);
 
   Display_Set_Blightless(uconf.Backlight.blight);    
+  SCREENSAVER_RESET();
 
   MX_USART2_UART_Init();
   uint8_t stream_buff[1000]={0};
@@ -156,33 +158,68 @@ int main(void)
     if(pre_count!=TIM1_Counter)
     {
       TouchSense_Count_Touching();
-      if(uconf.state==0)
-        Display_AnalogClock(); 
-      if(uconf.state==1)
-        Display_DigitalClock();
+      Process_for_states(&uconf.state);
     }
     pre_count = TIM1_Counter;
+    Process_for_Touch(&uconf.state);
+  }
+}
 
-    uconf.touch_time[0] = TouchSense_Get_TouchTime(0);
-    uconf.touch_time[1] = TouchSense_Get_TouchTime(1);
+void Process_for_Touch(Operational_Sstaes *stat)
+{ 
+  uint16_t pad_t1 = TouchSense_Get_TouchTime(0);
+  uint16_t pad_t2 = TouchSense_Get_TouchTime(1);
 
-    if(uconf.touch_time[0]>10)
-    {
-      ILI9325_FillScreen(ILI9325_WHITE);
-      Display_Reset_PreviousDatas();
-      SOUND_BEEP_ms(50);
-      SCREENSAVER_RESET();
+  if((pad_t1+pad_t2) > _DETECT_TOUCH)
+    {SOUND_BEEP_ms(50); SCREENSAVER_RESET();}
 
-      if(uconf.state==0)
-        uconf.state = 1;
-      else
-        uconf.state = 0;
-    }     
-    if(uconf.touch_time[1]>10)
-    {
-      SCREENSAVER_RESET();
-      SOUND_BEEP_ms(50);
-    }
+  switch((uint8_t)*stat)
+  {
+    case SCREEN_SAVER:
+      if( (pad_t1+pad_t2) > _DETECT_TOUCH)
+        *stat = uconf.state_temp;
+    break;
+
+    case DIGITAL_CLOCK:
+      if(pad_t1 > _DETECT_TOUCH)
+        *stat = ANALOG_CLOCK;
+      else if(pad_t2 > _DETECT_TOUCH)
+        *stat = ADJ_TIME;
+    break;
+    
+    case ANALOG_CLOCK:
+      if(pad_t1 > _DETECT_TOUCH)
+        *stat = DIGITAL_CLOCK;
+      else if(pad_t2 > _DETECT_TOUCH)
+        *stat = ADJ_TIME;
+    break;
+
+    default:
+    break;
+  }
+}
+
+void Process_for_states(Operational_Sstaes *stat)
+{
+  switch((uint8_t)*stat)
+  {
+    case SCREEN_SAVER:
+    break;
+
+    case DIGITAL_CLOCK:
+      Display_DigitalClock();
+    break;
+    
+    case ANALOG_CLOCK:
+      Display_AnalogClock(); 
+    break;
+
+    case ADJ_TIME:
+      *stat = DIGITAL_CLOCK;
+    break;
+
+    default:
+    break;
   }
 }
 
@@ -193,26 +230,30 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   TIM1_Counter++;
 
   if(uconf.Backlight.saver_switch)
-  {
-    if(uconf.Backlight.saver_timer)uconf.Backlight.saver_timer--;
-    
+  {    
     if(uconf.Backlight.saver_timer)
-      Display_Set_Blightless(uconf.Backlight.blight);    
+    {
+      Display_Set_Blightless(uconf.Backlight.blight);
+      uconf.Backlight.saver_timer--;
+      uconf.state_temp = uconf.state;
+    }    
     else
+    {
       Display_Set_Blightless(0);
+      uconf.state = SCREEN_SAVER;
+    }
   }
+  else
+  {
+    Display_Set_Blightless(uconf.Backlight.blight);
+  }
+  Display_Process_BackLight();  
 
   if(uconf.Beep.beep_switch)
   {
-    if(uconf.Beep.beep_timer)uconf.Beep.beep_timer--;
-
-    if(uconf.Beep.beep_timer) 
-      Buzzer_ON();
-    else 
-      Buzzer_OFF();
+    if(uconf.Beep.beep_timer){Buzzer_ON(); uconf.Beep.beep_timer--;}
+    else                      Buzzer_OFF();
   }
-
-  Display_Process_BackLight();  
 }
 
 /** System Clock Configuration
