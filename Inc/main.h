@@ -110,12 +110,12 @@ typedef enum
   ANALOG_CLOCK  = 2,
   SETTING       = 3,
   ADJ_TIME      = 4,
-}Operational_Sstaes;
+}Operational_States;
 
 typedef struct
 {
-  Operational_Sstaes state;
-  Operational_Sstaes state_temp;
+  Operational_States state;
+  Operational_States state_temp;
   
   struct
   {

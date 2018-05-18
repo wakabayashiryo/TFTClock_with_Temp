@@ -75,8 +75,8 @@ static void MX_TIM2_Init(void);
 
 void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
 
-void Process_for_Touch(Operational_Sstaes *stat);
-void Process_for_states(Operational_Sstaes *stat);
+void Process_for_Touch(Operational_States *stat);
+void Process_for_states(Operational_States *stat);
 /* USER CODE BEGIN PFP */
 /* USER CODE END PFP */
 
@@ -165,7 +165,7 @@ int main(void)
   }
 }
 
-void Process_for_Touch(Operational_Sstaes *stat)
+void Process_for_Touch(Operational_States *stat)
 { 
   uint16_t pad_t1 = TouchSense_Get_TouchTime(0);
   uint16_t pad_t2 = TouchSense_Get_TouchTime(1);
@@ -199,13 +199,10 @@ void Process_for_Touch(Operational_Sstaes *stat)
   }
 }
 
-void Process_for_states(Operational_Sstaes *stat)
+void Process_for_states(Operational_States *stat)
 {
   switch((uint8_t)*stat)
   {
-    case SCREEN_SAVER:
-    break;
-
     case DIGITAL_CLOCK:
       Display_DigitalClock();
     break;
