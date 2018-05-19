@@ -219,10 +219,6 @@ void Process_for_Touch(user_config *uc)
       }
     break;
 
-    case ADJ_TIME:
-      ;
-    break;
-
     default:
     break;
   }
@@ -242,6 +238,10 @@ void Process_for_states(user_config *uc)
 
     case ADJ_TIME:
       Display_Adjust_Time(&uconf);
+    break;
+
+    case SETTING:
+      Display_user_Setting(&uconf);
     break;
 
     default:
@@ -274,11 +274,10 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     Display_Set_BackLight();
   }  
 
-  if(uconf.Beep.beep_switch)
-  {
-    if(uconf.Beep.beep_timer){Buzzer_ON(); uconf.Beep.beep_timer--;}
-    else                      Buzzer_OFF();
-  }
+    if(uconf.Beep.beep_timer&&uconf.Beep.beep_switch)
+    { Buzzer_ON(); uconf.Beep.beep_timer--;}
+    else
+      Buzzer_OFF();
 }
 
 /** System Clock Configuration

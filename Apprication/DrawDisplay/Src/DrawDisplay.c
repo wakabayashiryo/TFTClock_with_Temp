@@ -285,9 +285,9 @@ void Display_DigitalClock(void)
 
 }
  
-void Draw_Adjusing_point(uint8_t stat)
+void Draw_Adjusing_pointer(uint8_t stat)
 {
-const uint16_t point_pos[][2] = {
+  const uint16_t point_pos[][2] = {
     {15,55},{15,125},{25,195},{160,45},{160,90},{160,90},
   };
   if(stat>0)
@@ -308,7 +308,7 @@ void Display_Adjust_Time(user_config *uc)
      
       RTC_Get_Calendar(&hrtc,&sdate_temp,&stime_temp);
 
-      Draw_Adjusing_point(adjt);
+      Draw_Adjusing_pointer(adjt);
 
       Display_DrawString(187,37,ILI9325_Color565(0,188,212),4,"%4d",2000+sdate_temp.Year);
       Display_DrawString(180,90,ILI9325_Color565(0,188,212),3,"%-4s%2d",MonthStr[sdate_temp.Month],sdate_temp.Date);
@@ -366,14 +366,107 @@ void Display_Adjust_Time(user_config *uc)
 
   if(uc->pt1 > _DETECT_TOUCH)
   {
-    Draw_Adjusing_point(adjt);
+    Draw_Adjusing_pointer(adjt);
 
     if(++adjt>6)
     {
       adjt = STORE_TIME;  
-      uc->state = DIGITAL_CLOCK;
+      uc->state = SETTING;
       stime_temp.Seconds = 0;
       RTC_Set_Calendar(&hrtc,&sdate_temp,&stime_temp);
+
+      ILI9325_FillScreen(ILI9325_WHITE);
+      Display_Reset_PreviousDatas();
     }
   } 
+}
+ 
+void Draw_Setting_pointer(uint8_t stat)
+{
+  const uint16_t point_pos[][2] = {
+    {10,45},{10,85},{10,125},
+  };
+  if(stat>0)
+    Display_DrawString(point_pos[stat-1][0],point_pos[stat-1][1],ILI9325_WHITE,2,">");
+  
+    Display_DrawString(point_pos[stat][0],point_pos[stat][1],ILI9325_RED,2,">");
+}
+
+void Display_user_Setting(user_config *uc)
+{
+  static Setting_States cs= DROW_TEXT;
+  static uint8_t param_point = 0;
+  static const float saver_time_param[] = {
+    1.0, 3.0 , 5.0, 10.0, 30.0 , 60.0 , 90.0, 
+  };
+
+  switch((uint8_t)cs)
+  {
+    case DROW_TEXT:
+      ILI9325_DrawString(35,40,(int8_t *)"Beep Sound",ILI9325_BLACK,3);
+      ILI9325_DrawString(255,40,(uc->Beep.beep_switch==1)?(int8_t *)"ON ":(int8_t *)"OFF",ILI9325_BLACK,3);
+
+      ILI9325_DrawString(35,80,(int8_t *)"Screen Saver",ILI9325_BLACK,3);
+      ILI9325_DrawString(255,80,(uc->Backlight.saver_switch==1)?(int8_t *)"ON ":(int8_t *)"OFF",ILI9325_BLACK,3);
+      
+      ILI9325_DrawString(35,120,(int8_t *)"Saver Time",ILI9325_BLACK,3);
+      ILI9325_DrawString(280,125,(int8_t *)"min",ILI9325_BLACK,2);
+      Display_DrawString(235,120,ILI9325_BLACK,3,"%2d",(uint16_t)uc->Backlight.saver_minutes);
+
+      Draw_Setting_pointer(cs);
+      cs = SETTING_BEEP;
+    break;
+
+    case SETTING_BEEP:
+      if(uc->pt2> _DETECT_TOUCH)
+      { 
+        uc->Beep.beep_switch = !uc->Beep.beep_switch;
+        
+        if(uc->Beep.beep_switch)
+          Display_DrawString(255,40,ILI9325_BLACK,3,"ON ");  
+        else
+          Display_DrawString(255,40,ILI9325_BLACK,3,"OFF");
+      }
+      break;
+
+    case SETTING_SAVER:
+      if(uc->pt2> _DETECT_TOUCH)
+      { 
+        uc->Backlight.saver_switch = !uc->Backlight.saver_switch;
+        
+        if(uc->Backlight.saver_switch)
+          Display_DrawString(255,80,ILI9325_BLACK,3,"ON ");  
+        else
+          Display_DrawString(255,80,ILI9325_BLACK,3,"OFF");
+      }
+    break;
+    
+    case SETTING_SAVER_TIME:
+      if(uc->pt2> _DETECT_TOUCH)
+      { 
+        if(++param_point>6)param_point=0;
+
+        uc->Backlight.saver_minutes = saver_time_param[param_point];
+        
+        Display_DrawString(235,120,ILI9325_BLACK,3,"%2d",(uint16_t)saver_time_param[param_point]);  
+      }
+    break;
+    
+    default:
+    break;
+  }
+  
+  if(uc->pt1 > _DETECT_TOUCH)
+  {
+    Draw_Setting_pointer(cs);    
+    
+    if(++cs>3)
+    {
+      cs = DROW_TEXT;  
+      uc->state = DIGITAL_CLOCK;
+
+      ILI9325_FillScreen(ILI9325_WHITE);
+      Display_Reset_PreviousDatas();
+    }
+  }
 }

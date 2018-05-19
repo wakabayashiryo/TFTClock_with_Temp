@@ -43,7 +43,6 @@
 
 #define PROCESSTIME_ENVIR 30000 //ms
 
-
 typedef enum
 {
   STORE_TIME      = 0,
@@ -54,6 +53,14 @@ typedef enum
   ADJUST_MONT     = 5,
   ADJUST_DATE     = 6
 }AdjustTime_States;
+
+typedef enum
+{
+  DROW_TEXT           = 0,
+  SETTING_BEEP        = 1,
+  SETTING_SAVER       = 2,
+  SETTING_SAVER_TIME  = 3,
+}Setting_States;
 
 /* USER CODE BEGIN Includes */
 
@@ -67,7 +74,7 @@ void Display_DigitalClock(void);
 void Display_AnalogClock(void);
 
 void Display_Adjust_Time();
-
+void Display_user_Setting();
 /* USER CODE END Includes */
 
 /* Private define ------------------------------------------------------------*/
