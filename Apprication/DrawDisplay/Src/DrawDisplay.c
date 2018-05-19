@@ -5,10 +5,10 @@
 static uint16_t BackColor = ILI9325_BLACK;
 static uint16_t ProcessCount_Envir = PROCESSTIME_ENVIR-1;
 
-static uint8_t PreviousDate;
-static uint8_t PreviousSeconds;
-static uint8_t PreviousMinutes;
-static uint8_t PreviousHours;
+static uint8_t PreviousDate     = 0;
+static uint8_t PreviousSeconds  = 0;
+static uint8_t PreviousMinutes  = 0;
+static uint8_t PreviousHours    = 0;
 
 static const char* MonthStr[]={
   "Jan.","Feb.","Mar.","Apr.","May","June","July","Aug.","Sep.","Oct.","Nov.","Dec.",
@@ -211,7 +211,7 @@ void Display_AnalogClock(void)
 
     Display_DrawString(190,102,ILI9325_Color565(0,188,212),2,"%s ",DateStr[sdate.WeekDay-1]);
 
-    Draw_HourHand(160,105,60,(stime.Hours<13)? stime.Hours*5:stime.Hours*2.5,1,ILI9325_GREEN);
+    Draw_HourHand(160,105,60,(stime.Hours<13)? stime.Hours:(stime.Hours-12)*5,1,ILI9325_GREEN);
 
     Draw_HourHand(160,105,100,stime.Minutes,1,ILI9325_BLUE);
   }
@@ -246,7 +246,7 @@ void Display_DigitalClock(void)
     PreviousDate = sdate.Date;
 
     Display_DrawString(50,200,ILI9325_Color565(0,188,212),2,"%s ",RTC_Get_WeekDay_Char(&sdate));
-    Display_DrawString(180,90,ILI9325_Color565(0,188,212),3,"%-4s%02d",MonthStr[sdate.Month],sdate.Date);
+    Display_DrawString(180,90,ILI9325_Color565(0,188,212),3,"%-4s%2d",MonthStr[sdate.Month],sdate.Date);
     Display_DrawString(187,37,ILI9325_Color565(0,188,212),4,"%4d",2000+sdate.Year);
   }
 
@@ -285,17 +285,97 @@ void Display_DigitalClock(void)
 
 }
  
-void Display_Adjust_Time(AdjustTime_States *stat)
+void Draw_Adjusing_point(uint8_t stat)
 {
+const uint16_t point_pos[][2] = {
+    {15,55},{15,125},{25,195},{160,45},{160,90},{160,90},
+  };
+  if(stat>0)
+    Display_DrawString(point_pos[stat-1][0],point_pos[stat-1][1],ILI9325_WHITE,3,">");
+  
+  Display_DrawString(point_pos[stat][0],point_pos[stat][1],ILI9325_RED,3,">");
+}
+
+void Display_Adjust_Time(user_config *uc)
+{
+  static AdjustTime_States adjt = STORE_TIME;
   static RTC_TimeTypeDef stime_temp;
   static RTC_DateTypeDef sdate_temp;
 
-  Display_DrawString(187,37,ILI9325_Color565(0,188,212),4,"%4d",2000+sdate.Year);
-  Display_DrawString(180,90,ILI9325_Color565(0,188,212),3,"%-4s%02d",MonthStr[sdate.Month],sdate.Date);
-  Display_DrawString(50,200,ILI9325_Color565(0,188,212),2,"%s ",RTC_Get_WeekDay_Char(&sdate));
+  switch((uint8_t)adjt)
+  {
+    case STORE_TIME:
+     
+      RTC_Get_Calendar(&hrtc,&sdate_temp,&stime_temp);
 
-  Display_DrawString(35,37,ILI9325_Color565(96,125,139),8,"%2d",stime.Hours);
-  Display_DrawString(35,117,ILI9325_Color565(96,125,139),8,"%02d",stime.Minutes);
+      Draw_Adjusing_point(adjt);
+
+      Display_DrawString(187,37,ILI9325_Color565(0,188,212),4,"%4d",2000+sdate_temp.Year);
+      Display_DrawString(180,90,ILI9325_Color565(0,188,212),3,"%-4s%2d",MonthStr[sdate_temp.Month],sdate_temp.Date);
+      Display_DrawString(50,200,ILI9325_Color565(0,188,212),2,"%s ",RTC_Get_WeekDay_Char(&sdate_temp));
+      Display_DrawString(35,37,ILI9325_Color565(96,125,139),8,"%2d",stime_temp.Hours);
+      Display_DrawString(35,117,ILI9325_Color565(96,125,139),8,"%02d",stime_temp.Minutes);
+    
+      adjt = ADJUST_HOUR;
+  break;
+    
+    case ADJUST_HOUR:
+      if(uc->pt2 > _DETECT_TOUCH)
+      { 
+        if(++stime_temp.Hours>23)
+          stime_temp.Hours=0;
+        Display_DrawString(35,37,ILI9325_Color565(96,125,139),8,"%2d",stime_temp.Hours);
+      }
+    break;
+    
+    case ADJUST_MINU:
+  if(uc->pt2>0)xprintf("%d %d\n",adjt,uc->pt2);
+    xStream_fflush();
+      if(uc->pt2 > _DETECT_TOUCH)
+      { if(++stime_temp.Minutes>59)stime_temp.Minutes=0;
+      Display_DrawString(35,117,ILI9325_Color565(96,125,139),8,"%02d",stime_temp.Minutes);}
+    break;
+    
+    case ADJUST_WEEK:
+     if(uc->pt2 > _DETECT_TOUCH)
+      { if(++sdate_temp.WeekDay>7)sdate_temp.WeekDay=1;
+      Display_DrawString(50,200,ILI9325_Color565(0,188,212),2,"%s ",RTC_Get_WeekDay_Char(&sdate_temp));}
+    break;
+    
+    case ADJUST_YEAR:
+      if(uc->pt2 > _DETECT_TOUCH)
+      { if(++sdate_temp.Year>100)sdate_temp.Year=0;
+      Display_DrawString(187,37,ILI9325_Color565(0,188,212),4,"%4d",2000+sdate_temp.Year);}
+    break;
+    
+    case ADJUST_MONT:
+      if(uc->pt2 > _DETECT_TOUCH)
+      { if(++sdate_temp.Month>12)sdate_temp.Month=1;
+      Display_DrawString(180,90,ILI9325_Color565(0,188,212),3,"%-4s%2d",MonthStr[sdate_temp.Month],sdate_temp.Date);}
+    break;
+    
+    case ADJUST_DATE:
+      if(uc->pt2 > _DETECT_TOUCH)
+      { if(++sdate_temp.Date>31)sdate_temp.Date=0;
+      Display_DrawString(180,90,ILI9325_Color565(0,188,212),3,"%-4s%2d",MonthStr[sdate_temp.Month],sdate_temp.Date);}
+    break;
+    
+    default:
+    break;
+  }
+
+  if(uc->pt1 > _DETECT_TOUCH)
+  {
+    Draw_Adjusing_point(adjt);
+
+    if(++adjt>6)
+    {
+      adjt = STORE_TIME;  
+      uc->state = DIGITAL_CLOCK;
+      stime_temp.Seconds = 0;
+      RTC_Set_Calendar(&hrtc,&sdate_temp,&stime_temp);
+    }
+  } 
 }
 
 

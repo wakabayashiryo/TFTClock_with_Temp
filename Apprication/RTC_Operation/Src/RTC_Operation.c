@@ -1,13 +1,13 @@
 #include "RTC_Operation.h"
 
 const char *weekday_char[] = {
-  "Monday",
-  "Tuesday",
+  "Monday   ",
+  "Tuesday  ",
   "Wednesday",
-  "Thursday",
-  "Friday",
-  "Saturday",
-  "Sunday"
+  "Thursday ",
+  "Friday   ",
+  "Saturday ",
+  "Sunday   "
 };
 
 /**

@@ -75,8 +75,8 @@ static void MX_TIM2_Init(void);
 
 void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
 
-void Process_for_Touch(Operational_States *stat);
-void Process_for_states(Operational_States *stat);
+void Process_for_Touch(user_config *uc);
+void Process_for_states(user_config *uc);
 /* USER CODE BEGIN PFP */
 /* USER CODE END PFP */
 
@@ -85,11 +85,9 @@ uint32_t TIM1_Counter;
 user_config uconf = {
   .state = DIGITAL_CLOCK,
   .Beep.beep_switch = 1,
-  .Backlight.saver_switch = 1,
+  .Backlight.saver_switch = 0,
   .Backlight.blight = 4,
-  .Backlight.saver_minutes = 0.5,
-};
-AdjustTime_States adjt = {
+  .Backlight.saver_minutes = 1,
 };
 /* USER CODE END 0 */
 
@@ -141,7 +139,17 @@ int main(void)
   TouchSense_Set_Configuration(500,500);
 
   MX_RTC_Init();
-  
+  if(HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin)==GPIO_PIN_RESET)
+  {
+    stime.Hours = 0;
+    stime.Minutes = 0;
+    sdate.WeekDay = RTC_WEEKDAY_MONDAY;
+    sdate.Month = RTC_MONTH_JANUARY;
+    sdate.Date  = 1;
+    sdate.Year = 0;
+    RTC_Set_Calendar(&hrtc,&sdate,&stime);  
+  }
+
   MX_TIM1_Init();
   if(HAL_TIM_Base_Start_IT(&htim1) != HAL_OK)
     Error_Handler();
@@ -153,55 +161,68 @@ int main(void)
   /* USER CODE BEGIN 2 */
   uint32_t pre_count;
   /* USER CODE END 2 */
-  
-   /* Infinite loop */
+
+  /* Infinite loop */
   while (1)
   {
     if(pre_count!=TIM1_Counter)
     {
       TouchSense_Count_Touching();
-      Process_for_states(&uconf.state);
+
+      Process_for_Touch(&uconf);      
+      Process_for_states(&uconf);
     }
     pre_count = TIM1_Counter;
-    Process_for_Touch(&uconf.state);
   }
 }
 
-void Process_for_Touch(Operational_States *stat)
+void Process_for_Touch(user_config *uc)
 { 
-  uint16_t pad_t1 = TouchSense_Get_TouchTime(0);
-  uint16_t pad_t2 = TouchSense_Get_TouchTime(1);
+  uc->pt1 = TouchSense_Get_TouchTime(0);
+  uc->pt2 = TouchSense_Get_TouchTime(1);
 
-  if((pad_t1+pad_t2) > _DETECT_TOUCH)
+  if((uc->pt1+uc->pt2) > _DETECT_TOUCH)
     {SOUND_BEEP_ms(50); SCREENSAVER_RESET();}
 
-  switch((uint8_t)*stat)
+  switch((uint8_t)uc->state)
   {
     case SCREEN_SAVER:
-      if( (pad_t1+pad_t2) > _DETECT_TOUCH)
-        *stat = uconf.state_temp;
+      if( (uc->pt1+uc->pt2) > _DETECT_TOUCH)
+        uc->state = uconf.state_temp;
     break;
 
     case DIGITAL_CLOCK:
-      if(pad_t1 > _DETECT_TOUCH)
+      if(uc->pt1 > _DETECT_TOUCH)
       {
         ILI9325_FillScreen(ILI9325_WHITE);
         Display_Reset_PreviousDatas();
-        *stat = ANALOG_CLOCK;      
+        uc->state = ANALOG_CLOCK;      
       }
-      else if(pad_t2 > _DETECT_TOUCH)
-        *stat = ADJ_TIME;
+      else if(uc->pt2 > _DETECT_TOUCH)
+      {
+        ILI9325_FillScreen(ILI9325_WHITE);
+        Display_Reset_PreviousDatas();
+        uc->state = ADJ_TIME;
+      }
     break;
     
     case ANALOG_CLOCK:
-      if(pad_t1 > _DETECT_TOUCH)
+      if(uc->pt1 > _DETECT_TOUCH)
       {
         ILI9325_FillScreen(ILI9325_WHITE);
         Display_Reset_PreviousDatas();
-        *stat = DIGITAL_CLOCK;
+        uc->state = DIGITAL_CLOCK;
       }
-      else if(pad_t2 > _DETECT_TOUCH)
-        *stat = ADJ_TIME;
+      else if(uc->pt2 > _DETECT_TOUCH)
+      {
+        ILI9325_FillScreen(ILI9325_WHITE);
+        Display_Reset_PreviousDatas();
+        uc->state = ADJ_TIME;
+      }
+    break;
+
+    case ADJ_TIME:
+      ;
     break;
 
     default:
@@ -209,9 +230,9 @@ void Process_for_Touch(Operational_States *stat)
   }
 }
 
-void Process_for_states(Operational_States *stat)
+void Process_for_states(user_config *uc)
 {
-  switch((uint8_t)*stat)
+  switch((uint8_t)uc->state)
   {
     case DIGITAL_CLOCK:
       Display_DigitalClock();
@@ -222,7 +243,7 @@ void Process_for_states(Operational_States *stat)
     break;
 
     case ADJ_TIME:
-      *stat = DIGITAL_CLOCK;
+      Display_Adjust_Time(&uconf);
     break;
 
     default:

@@ -44,6 +44,17 @@
 #define PROCESSTIME_ENVIR 30000 //ms
 
 
+typedef enum
+{
+  STORE_TIME      = 0,
+  ADJUST_HOUR     = 1,
+  ADJUST_MINU     = 2,
+  ADJUST_WEEK     = 3,
+  ADJUST_YEAR     = 4,
+  ADJUST_MONT     = 5,
+  ADJUST_DATE     = 6
+}AdjustTime_States;
+
 /* USER CODE BEGIN Includes */
 
 #define Display_Set_BackLight()   GPIOC->ODR &= ~(1<<0)
@@ -54,6 +65,8 @@ void Display_Set_BackColor(uint16_t color);
 
 void Display_DigitalClock(void);
 void Display_AnalogClock(void);
+
+void Display_Adjust_Time();
 
 void Display_Set_Blightless(uint8_t Blight);
 void Display_Process_BackLight(void);

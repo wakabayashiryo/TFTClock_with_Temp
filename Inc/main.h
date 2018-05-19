@@ -114,17 +114,6 @@ typedef enum
 
 typedef struct
 {
-  uint8_t figure_pos;
-  enum
-  {
-    READ_TIME = 0,
-    ADJUSTING = 1,
-    DETERMINE_TIME = 2,,
-  };
-}AdjustTime_States;
-
-typedef struct
-{
   Operational_States state;
   Operational_States state_temp;
   
@@ -141,6 +130,8 @@ typedef struct
     uint8_t beep_switch;
     uint32_t beep_timer;
   }Beep;
+  uint16_t pt1;
+  uint16_t pt2;
 }user_config;
 
 #define _DETECT_TOUCH 10
