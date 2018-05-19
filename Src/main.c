@@ -85,8 +85,7 @@ uint32_t TIM1_Counter;
 user_config uconf = {
   .state = DIGITAL_CLOCK,
   .Beep.beep_switch = 1,
-  .Backlight.saver_switch = 0,
-  .Backlight.blight = 4,
+  .Backlight.saver_switch = 1,
   .Backlight.saver_minutes = 1,
 };
 /* USER CODE END 0 */
@@ -122,8 +121,7 @@ int main(void)
   ILI9325_FillScreen(ILI9325_WHITE);
   ILI9325_SetRotation(3);
   Display_Set_BackColor(ILI9325_WHITE);
-
-  Display_Set_Blightless(uconf.Backlight.blight);    
+ 
   SCREENSAVER_RESET();
 
   MX_USART2_UART_Init();
@@ -261,21 +259,20 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   {    
     if(uconf.Backlight.saver_timer)
     {
-      Display_Set_Blightless(uconf.Backlight.blight);
+      Display_Set_BackLight();
       uconf.Backlight.saver_timer--;
       uconf.state_temp = uconf.state;
     }    
     else
     {
-      Display_Set_Blightless(0);
+      Display_Reset_BackLight();
       uconf.state = SCREEN_SAVER;
     }
   }
   else
   {
-    Display_Set_Blightless(uconf.Backlight.blight);
-  }
-  Display_Process_BackLight();  
+    Display_Set_BackLight();
+  }  
 
   if(uconf.Beep.beep_switch)
   {

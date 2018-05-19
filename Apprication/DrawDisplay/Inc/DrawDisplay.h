@@ -68,8 +68,6 @@ void Display_AnalogClock(void);
 
 void Display_Adjust_Time();
 
-void Display_Set_Blightless(uint8_t Blight);
-void Display_Process_BackLight(void);
 /* USER CODE END Includes */
 
 /* Private define ------------------------------------------------------------*/

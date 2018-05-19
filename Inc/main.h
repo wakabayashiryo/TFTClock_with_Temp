@@ -122,7 +122,6 @@ typedef struct
     uint8_t saver_switch;
     float saver_minutes;
     uint32_t saver_timer;
-    uint8_t blight;
   }Backlight;
 
   struct
