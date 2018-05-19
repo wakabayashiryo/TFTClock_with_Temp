@@ -184,14 +184,22 @@ void Process_for_Touch(Operational_States *stat)
 
     case DIGITAL_CLOCK:
       if(pad_t1 > _DETECT_TOUCH)
-        *stat = ANALOG_CLOCK;
+      {
+        ILI9325_FillScreen(ILI9325_WHITE);
+        Display_Reset_PreviousDatas();
+        *stat = ANALOG_CLOCK;      
+      }
       else if(pad_t2 > _DETECT_TOUCH)
         *stat = ADJ_TIME;
     break;
     
     case ANALOG_CLOCK:
       if(pad_t1 > _DETECT_TOUCH)
+      {
+        ILI9325_FillScreen(ILI9325_WHITE);
+        Display_Reset_PreviousDatas();
         *stat = DIGITAL_CLOCK;
+      }
       else if(pad_t2 > _DETECT_TOUCH)
         *stat = ADJ_TIME;
     break;
