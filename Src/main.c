@@ -86,7 +86,7 @@ user_config uconf = {
   .state = DIGITAL_CLOCK,
   .Beep.beep_switch = 1,
   .Backlight.saver_switch = 1,
-  .Backlight.saver_minutes = 1,
+  .Backlight.saver_minutes = 10,
 };
 /* USER CODE END 0 */
 
@@ -180,7 +180,7 @@ void Process_for_Touch(user_config *uc)
   uc->pt2 = TouchSense_Get_TouchTime(1);
 
   if((uc->pt1+uc->pt2) > _DETECT_TOUCH)
-    {SOUND_BEEP_ms(50); SCREENSAVER_RESET();}
+    {SOUND_BEEP_ms(25); SCREENSAVER_RESET();}
 
   switch((uint8_t)uc->state)
   {
@@ -199,7 +199,6 @@ void Process_for_Touch(user_config *uc)
       else if(uc->pt2 > _DETECT_TOUCH)
       {
         ILI9325_FillScreen(ILI9325_WHITE);
-        Display_Reset_PreviousDatas();
         uc->state = ADJ_TIME;
       }
     break;
@@ -214,7 +213,6 @@ void Process_for_Touch(user_config *uc)
       else if(uc->pt2 > _DETECT_TOUCH)
       {
         ILI9325_FillScreen(ILI9325_WHITE);
-        Display_Reset_PreviousDatas();
         uc->state = ADJ_TIME;
       }
     break;

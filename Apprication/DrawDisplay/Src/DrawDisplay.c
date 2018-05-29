@@ -211,7 +211,7 @@ void Display_AnalogClock(void)
 
     Display_DrawString(190,102,ILI9325_Color565(0,188,212),2,"%s ",DateStr[sdate.WeekDay-1]);
 
-    Draw_HourHand(160,105,60,(stime.Hours<13)? stime.Hours:(stime.Hours-12)*5,1,ILI9325_GREEN);
+    Draw_HourHand(160,105,60,(stime.Hours<13)? stime.Hours*5:(stime.Hours-12)*5,1,ILI9325_GREEN);
 
     Draw_HourHand(160,105,100,stime.Minutes,1,ILI9325_BLUE);
   }
@@ -321,23 +321,19 @@ void Display_Adjust_Time(user_config *uc)
     
     case ADJUST_HOUR:
       if(uc->pt2 > _DETECT_TOUCH)
-      { 
-        if(++stime_temp.Hours>23)
-          stime_temp.Hours=0;
+      { if(++stime_temp.Hours>23)stime_temp.Hours=0;
         Display_DrawString(35,37,ILI9325_Color565(96,125,139),8,"%2d",stime_temp.Hours);
       }
     break;
     
     case ADJUST_MINU:
-  if(uc->pt2>0)xprintf("%d %d\n",adjt,uc->pt2);
-    xStream_fflush();
       if(uc->pt2 > _DETECT_TOUCH)
       { if(++stime_temp.Minutes>59)stime_temp.Minutes=0;
       Display_DrawString(35,117,ILI9325_Color565(96,125,139),8,"%02d",stime_temp.Minutes);}
     break;
     
     case ADJUST_WEEK:
-     if(uc->pt2 > _DETECT_TOUCH)
+      if(uc->pt2 > _DETECT_TOUCH)
       { if(++sdate_temp.WeekDay>7)sdate_temp.WeekDay=1;
       Display_DrawString(50,200,ILI9325_Color565(0,188,212),2,"%s ",RTC_Get_WeekDay_Char(&sdate_temp));}
     break;
